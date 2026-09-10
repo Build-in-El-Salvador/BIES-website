@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-09-10T19:59:32.552Z",
+  "stale": false,
+  "organizer": {
+    "name": "Build in El Salvador",
+    "url": "https://tickets.buildinelsalvador.com/bies/",
+    "ics_url": "https://tickets.buildinelsalvador.com/bies/events/ical/"
+  },
+  "upcoming": [
+    {
+      "slug": "SN260926",
+      "title": "Build in El Salvador Launch Party",
+      "start": "2026-09-26T23:00:00+00:00",
+      "end": "2026-09-27T05:00:00+00:00",
+      "timezone": "America/El_Salvador",
+      "date_range": "Sat, Sept. 26, 2026 17:00 – 23:00",
+      "location": "Shack Texas BBQ, El Boqueron",
+      "geo": null,
+      "map_url": "https://www.google.com/maps/search/?api=1&query=Shack%20Texas%20BBQ%2C%20El%20Boqueron",
+      "host": "Build in El Salvador",
+      "status": null,
+      "cover": null,
+      "description_html": "<h2>Saturday 26 September · 5:00 - 11:00 PM</h2>\n<p><strong>Shack Texas BBQ, El Boquerón</strong></p>\n\n\n\n\n<hr>\n<h3>Ticket prices</h3>\n<p><strong>Pay in bitcoin and save 30%.</strong> Choose BTC Pay Lite at checkout and a $30 General<br>\nAdmission ticket becomes <strong>$21</strong>. Lightning and on-chain both accepted.</p>\n<p><strong>Salvadoran residents pay $21.</strong> Choose the Residente Salvadoreño ticket and bring<br>\nyour DUI - we check it at the door.</p>\n<hr>\n<h3>Getting there</h3>",
+      "currency": "USD",
+      "tickets": [
+        {
+          "id": 4,
+          "name": "General Admission",
+          "description_html": "<p>Pay with Bitcoin or Lightning at checkout and save 30% — this ticket becomes $21.</p>",
+          "price": "30.00",
+          "price_varies": false,
+          "free_price": false,
+          "available": true,
+          "left": null
+        },
+        {
+          "id": 5,
+          "name": "Salvadoran Resident (DUI)",
+          "description_html": "<p>Discounted rate for Salvadoran residents. Please bring your DUI - we check it at the door.</p>",
+          "price": "21.00",
+          "price_varies": false,
+          "free_price": false,
+          "available": true,
+          "left": null
+        }
+      ],
+      "price_from": "21.00",
+      "price_to": "30.00",
+      "availability": {
+        "reason": "ok",
+        "text": "Buy now"
+      },
+      "sales": "open",
+      "sales_note": null,
+      "waiting_list": true,
+      "tickets_url": "https://tickets.buildinelsalvador.com/bies/SN260926/",
+      "ics_url": "https://tickets.buildinelsalvador.com/bies/SN260926/ical/",
+      "is_past": false
+    }
+  ],
+  "past": [
+    {
+      "slug": "rountable09",
+      "title": "Navigating the Cultural Differences in El Salvador",
+      "start": "2026-09-08T23:00:00+00:00",
+      "end": null,
+      "timezone": "America/El_Salvador",
+      "date_range": "Tue, Sept. 8, 2026 17:00",
+      "location": "Tuscania",
+      "geo": null,
+      "map_url": "https://www.google.com/maps/search/?api=1&query=Tuscania",
+      "host": "Build in El Salvador",
+      "status": null,
+      "cover": null,
+      "description_html": "",
+      "currency": "USD",
+      "tickets": [
+        {
+          "id": 3,
+          "name": "TEST TICKET - do not buy",
+          "description_html": "",
+          "price": "1.00",
+          "price_varies": false,
+          "free_price": false,
+          "available": true,
+          "left": null
+        },
+        {
+          "id": 1,
+          "name": "Regular ticket",
+          "description_html": "",
+          "price": "30.00",
+          "price_varies": false,
+          "free_price": false,
+          "available": true,
+          "left": null
+        },
+        {
+          "id": 2,
+          "name": "Reduced ticket",
+          "description_html": "",
+          "price": "21.00",
+          "price_varies": false,
+          "free_price": false,
+          "available": true,
+          "left": null
+        }
+      ],
+      "price_from": "1.00",
+      "price_to": "30.00",
+      "availability": {
+        "reason": "over",
+        "text": "Sale over"
+      },
+      "sales": "past",
+      "sales_note": "The booking period for this event is over.",
+      "waiting_list": true,
+      "tickets_url": "https://tickets.buildinelsalvador.com/bies/rountable09/",
+      "ics_url": "https://tickets.buildinelsalvador.com/bies/rountable09/ical/",
+      "is_past": true
+    }
+  ]
+}

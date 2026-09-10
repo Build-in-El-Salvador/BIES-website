@@ -1,0 +1,17 @@
+# The Worker serves the repo root as the website (wrangler.jsonc: "assets.directory": ".").
+# Everything NOT listed here is public at https://buildinelsalvador.com/<path>.
+.git
+.gitignore
+.assetsignore
+.dev.vars*
+.wrangler
+node_modules
+wrangler.jsonc
+wrangler.toml
+src
+*.md
+CNAME
+.nojekyll
+.DS_Store
+# Local-preview data for events.html (python3 -m http.server); never needed live.
+assets/data

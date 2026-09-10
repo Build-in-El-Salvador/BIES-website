@@ -1,0 +1,23 @@
+// Cloudflare Worker "bies-website", deployed by Workers Builds on every push to main.
+// Until 2026-09 this config lived only in the Cloudflare dashboard (autoconfig). Committing
+// it keeps the same behaviour and adds one script route, /api/events (src/worker.js).
+{
+  // Must stay exactly "bies-website": another name would create a second Worker.
+  "name": "bies-website",
+  "main": "src/worker.js",
+  // Same date the dashboard autoconfig deployed; pinned so it no longer drifts per build.
+  "compatibility_date": "2026-09-08",
+  // No "routes" key on purpose: the custom domains (buildinelsalvador.com, www) are managed
+  // in the dashboard and a routes key here would take them over.
+  "keep_vars": true,
+  "observability": { "enabled": true },
+  "assets": {
+    // The repo root IS the website. Anything not listed in .assetsignore is public.
+    "directory": ".",
+    "binding": "ASSETS",
+    // Both values are the defaults the site already runs with today (/about.html -> 307 /about,
+    // unknown paths -> empty 404). Written out so nobody changes them by accident.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+}

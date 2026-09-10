@@ -70,6 +70,9 @@ section{position:relative}
 .nav-cta{display:flex;align-items:center;gap:.8rem}
 .nav-toggle{display:none;background:none;border:0;cursor:pointer;padding:.4rem}
 .nav-toggle span{display:block;width:24px;height:2px;background:var(--navy);margin:5px 0;transition:.25s}
+.nav-links a,.nav-cta .btn{white-space:nowrap}
+/* five nav items: tighten spacing on narrow desktops so nothing wraps before the 880px hamburger */
+@media (min-width:881px) and (max-width:1040px){.nav-links{gap:1.15rem}.nav-cta .btn{padding:.75rem 1.2rem}}
 
 /* ---------- Hero ---------- */
 .hero{padding:clamp(3.2rem,7vw,5.6rem) 0 2.4rem;text-align:center}

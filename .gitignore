@@ -1,0 +1,5 @@
+# Local Worker development (npx wrangler dev). .dev.vars can hold PRETIX_TOKEN: never commit it.
+.dev.vars*
+.wrangler/
+node_modules/
+.DS_Store

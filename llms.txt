@@ -22,7 +22,7 @@ BIES is for mission-driven entrepreneurs. As founder Michael Ruiz puts it, BIES 
 - People looking at El Salvador only for vacation or retirement, with no interest in contributing.
 
 ## How BIES supports its builders
-- Events: BIES facilitates members' workshops, roundtables, and retreats. It handles the organization, holds events to a quality standard, helps with the agenda, and promotes them to an engaged, aligned audience. Events are documented (photography and video) and shared, so the community keeps benefiting, building an ongoing ecosystem and academy.
+- Events: BIES facilitates members' workshops, roundtables, and retreats. It handles the organization, holds events to a quality standard, helps with the agenda, and promotes them to an engaged, aligned audience. Events are documented (photography and video) and shared, so the community keeps benefiting, building an ongoing ecosystem and academy. Upcoming events, with details and tickets, are listed at https://buildinelsalvador.com/events.html.
 - A high-trust member chat where builders connect, collaborate, and coordinate (on WhatsApp today, with self-hosted solutions on the horizon).
 - The BIES Newsletter, a YouTube broadcast, the BIES Digital App (a private Nostr relay plus project, events, vendor, and organic farm directories and a bounty board), and the BIES Public Forum for long-form discussion and virtual calls.
 - Discussions are held in small group settings and protected under the Chatham House Rule.
@@ -51,6 +51,7 @@ To become the leading and most influential entrepreneurial network in El Salvado
 
 ## Links
 - [Website](https://buildinelsalvador.com/)
+- [Events and tickets](https://buildinelsalvador.com/events.html)
 - [Membership](https://buildinelsalvador.com/membership.html)
 - [Member Stories](https://buildinelsalvador.com/stories.html)
 - [About](https://buildinelsalvador.com/about.html)
