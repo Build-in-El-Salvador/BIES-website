@@ -159,10 +159,25 @@
       cleanTree(el, doc);
     }
   }
+  // pretix turns every newline in its Markdown into <br>, so text pasted with hard wraps
+  // breaks mid-sentence. A break after a long line is a wrap and becomes a space; a break
+  // after a short line (an address, a schedule) is deliberate and stays.
+  const WRAP_MIN = 60;
+  function unwrapLines(root) {
+    const lineText = (n, step) => {
+      let s = '';
+      for (; n && n.nodeName !== 'BR'; n = n[step]) s += n.textContent;
+      return s.trim();
+    };
+    const wraps = Array.from(root.querySelectorAll('br')).filter((br) =>
+      lineText(br.previousSibling, 'previousSibling').length >= WRAP_MIN && lineText(br.nextSibling, 'nextSibling'));
+    for (const br of wraps) br.replaceWith(' ');
+  }
   function richHtml(html) {
     const doc = new DOMParser().parseFromString(`<div>${html || ''}</div>`, 'text/html');
     const root = doc.body.firstElementChild;
     cleanTree(root, doc);
+    unwrapLines(root);
     for (const p of Array.from(root.querySelectorAll('p'))) if (!p.textContent.trim() && !p.querySelector('br')) p.remove();
     while (root.firstElementChild && root.firstElementChild.tagName === 'HR') root.firstElementChild.remove();
     let last; // drop a trailing rule or a heading with nothing under it (e.g. an unfinished "Getting there")
