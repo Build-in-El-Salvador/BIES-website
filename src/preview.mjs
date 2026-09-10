@@ -20,10 +20,22 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
   '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
   '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml', '.mp4': 'video/mp4', '.webmanifest': 'application/manifest+json' };
 
-const memory = new Map(); // stand-in for the Cloudflare Cache API
+// Stand-in for the Cloudflare Cache API. Like the real one, an entry expires after the
+// s-maxage (else max-age) in its Cache-Control header, so pretix edits show up locally
+// on the same 2-minute schedule as in production.
+const memory = new Map();
 globalThis.caches = { default: {
-  match: async (req) => (memory.has(req.url) ? memory.get(req.url).clone() : undefined),
-  put: async (req, res) => { memory.set(req.url, res.clone()); },
+  match: async (req) => {
+    const hit = memory.get(req.url);
+    if (!hit) return undefined;
+    if (Date.now() >= hit.expires) { memory.delete(req.url); return undefined; }
+    return hit.res.clone();
+  },
+  put: async (req, res) => {
+    const cc = res.headers.get('Cache-Control') || '';
+    const age = /s-maxage=(\d+)/.exec(cc) || /max-age=(\d+)/.exec(cc);
+    memory.set(req.url, { res: res.clone(), expires: Date.now() + (age ? Number(age[1]) : 0) * 1000 });
+  },
 } };
 const env = { ASSETS: { fetch: async () => new Response('', { status: 404 }) } };
 
