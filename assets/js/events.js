@@ -169,17 +169,21 @@
     }
   }
   // pretix turns every newline in its Markdown into <br>, so text pasted with hard wraps
-  // breaks mid-sentence. A break after a long line is a wrap and becomes a space; a break
-  // after a short line (an address, a schedule) is deliberate and stays.
+  // breaks mid-sentence. A break in the middle of a long sentence is a wrap and becomes a
+  // space. A break after a short line (an address, a schedule) or after a finished
+  // sentence (one line per point) is deliberate and stays.
   const WRAP_MIN = 60;
+  const SENTENCE_END = /[.!?:;…]["'”’)\]]*$/;
   function unwrapLines(root) {
     const lineText = (n, step) => {
       let s = '';
-      for (; n && n.nodeName !== 'BR'; n = n[step]) s += n.textContent;
+      for (; n && n.nodeName !== 'BR'; n = n[step]) s = step === 'previousSibling' ? n.textContent + s : s + n.textContent;
       return s.trim();
     };
-    const wraps = Array.from(root.querySelectorAll('br')).filter((br) =>
-      lineText(br.previousSibling, 'previousSibling').length >= WRAP_MIN && lineText(br.nextSibling, 'nextSibling'));
+    const wraps = Array.from(root.querySelectorAll('br')).filter((br) => {
+      const before = lineText(br.previousSibling, 'previousSibling');
+      return before.length >= WRAP_MIN && !SENTENCE_END.test(before) && lineText(br.nextSibling, 'nextSibling');
+    });
     for (const br of wraps) br.replaceWith(' ');
   }
   function richHtml(html) {
