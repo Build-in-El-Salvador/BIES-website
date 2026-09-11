@@ -37,6 +37,9 @@ const CFG = {
 const ORG_URL = `${CFG.pretix}/${CFG.org}/`;
 const EVENT_URL_RE = new RegExp(`^${escapeRe(ORG_URL)}([A-Za-z0-9][A-Za-z0-9._-]{0,49})/$`);
 const LOCAL_HOST_RE = /^(localhost|127\.0\.0\.1|\[::1\])$/;
+// pretix product "current_unavailability_reason" values for tickets the public can't buy at
+// all: switched off, voucher-only, or hidden while another ticket is available. Left out.
+const HIDDEN_REASONS = new Set(['active', 'require_voucher', 'hidden_if_item_available']);
 
 export default {
   async fetch(request, env, ctx) {
@@ -79,10 +82,10 @@ async function eventsRoute(request, env, ctx) {
   }
 
   const { data, gaps } = built;
-  if (gaps.past || gaps.page.size || gaps.shop.size) {
+  if (gaps.past || gaps.api || gaps.page.size || gaps.shop.size) {
     // pretix answered the upcoming list but not everything else. Fill what it can from the
     // last good copy, keep this build only briefly, and never let it replace that copy.
-    console.warn(`events: partial build (past list ${gaps.past ? 'failed' : 'ok'}; `
+    console.warn(`events: partial build (past list ${gaps.past ? 'failed' : 'ok'}; API ${gaps.api ? 'failed' : 'ok'}; `
       + `pages failed: ${[...gaps.page].join(', ') || 'none'}; shops failed: ${[...gaps.shop].join(', ') || 'none'})`);
     fillGaps(data, gaps, await readJson(cache, lastGoodKey));
     const body = JSON.stringify(data);
@@ -101,23 +104,27 @@ async function eventsRoute(request, env, ctx) {
 }
 
 async function buildEvents(env) {
-  const signal = AbortSignal.timeout(CFG.buildMs); // shared by every request the upcoming events need
-  const gaps = { past: false, page: new Set(), shop: new Set() };
+  const signal = AbortSignal.timeout(CFG.buildMs); // shared by every event-detail request
+  const gaps = { past: false, api: false, page: new Set(), shop: new Set() };
   const details = (entries) => Promise.all(entries.map((entry) => eventDetail(entry, signal)));
-  // Upcoming events start loading their details as soon as their list arrives. The past
-  // list and the API extras are optional and get a shorter timeout of their own.
+  // Upcoming events load their details as soon as their list arrives. The past list and the
+  // API extras are optional and get a shorter timeout of their own. Past details wait for
+  // the upcoming list, so they never queue ahead of upcoming ones (Workers runs 6 fetches
+  // at a time).
+  const upcomingList = getList(`${ORG_URL}widget/product_list?lang=en&style=list`, signal); // pretix's own "upcoming, live, public" list
+  const pastList = getList(`${ORG_URL}widget/product_list?lang=en&old=1&style=list`, AbortSignal.timeout(CFG.optionalMs))
+    .catch((err) => {
+      warn('past list skipped', err);
+      gaps.past = true;
+      return null;
+    });
   const [upcoming, past, api] = await Promise.all([
-    getList(`${ORG_URL}widget/product_list?lang=en&style=list`, signal) // pretix's own "upcoming, live, public" list
-      .then((list) => details(listEntries(list, false).slice(0, CFG.maxUpcoming))),
-    getList(`${ORG_URL}widget/product_list?lang=en&old=1&style=list`, AbortSignal.timeout(CFG.optionalMs))
-      .then((list) => details(listEntries(list, true).slice(0, CFG.maxPast)))
-      .catch((err) => {
-        warn('past list skipped', err);
-        gaps.past = true;
-        return [];
-      }),
+    upcomingList.then((list) => details(listEntries(list, false).slice(0, CFG.maxUpcoming))),
+    Promise.all([pastList, upcomingList.catch(() => null)])
+      .then(([list]) => (list ? details(listEntries(list, true).slice(0, CFG.maxPast)) : [])),
     apiIndex(env, AbortSignal.timeout(CFG.optionalMs)).catch((err) => {
       warn('API extras skipped', err);
+      gaps.api = true; // only reachable when PRETIX_TOKEN is set
       return null;
     }),
   ]);
@@ -141,10 +148,10 @@ async function buildEvents(env) {
   };
 }
 
-// Fill what failed from the last good build, field by field. The date, cover and
-// description rarely change, so an older copy of those is fine. Ticket and sales data are
-// never copied: an event whose shop data failed shows "View on ticket site" rather than an
-// outdated "on sale".
+// Fill what failed from the last good build, field by field. The date, cover, description
+// and the API extras (status, host, map position) rarely change, so an older copy of those
+// is fine. Ticket and sales data are never copied: an event whose shop data failed shows
+// "View on ticket site" rather than an outdated "on sale".
 function fillGaps(data, gaps, saved) {
   if (!saved) return;
   const old = new Map([...(saved.upcoming || []), ...(saved.past || [])].map((e) => [e.slug, e]));
@@ -159,10 +166,24 @@ function fillGaps(data, gaps, saved) {
       if (!ev.cover) ev.cover = prev.cover || null;
     }
     if (gaps.shop.has(ev.slug) && !ev.description_html) ev.description_html = prev.description_html || '';
+    if (gaps.api) {
+      ev.status = prev.status || null;
+      ev.host = prev.host || ev.host;
+      ev.timezone = prev.timezone || ev.timezone;
+      if (prev.geo) {
+        ev.geo = prev.geo;
+        ev.map_url = prev.map_url;
+      }
+    }
   }
   if (gaps.past && Array.isArray(saved.past)) {
     const listed = new Set(data.upcoming.map((e) => e.slug));
-    data.past = saved.past.filter((e) => e && !listed.has(e.slug));
+    // An event that was upcoming in the saved copy, has left the upcoming list and is over
+    // has ended since then: keep it, as a past event.
+    const endedSince = (saved.upcoming || [])
+      .filter((e) => e && !listed.has(e.slug) && (Date.parse(e.end) || Date.parse(e.start)) < Date.now())
+      .map((e) => ({ ...e, is_past: true, sales: 'past' }));
+    data.past = [...endedSince, ...saved.past.filter((e) => e && !listed.has(e.slug))];
   }
   data.upcoming.sort(byStart);
   data.past.sort(byStartDesc);
@@ -213,12 +234,19 @@ async function eventDetail(entry, signal) {
     .filter(Number.isFinite);
 
   let sales;
+  let salesNote = shop && shop.error ? text(shop.error) : null;
+  let availability = entry.availability;
   if (entry.is_past) sales = 'past';
   else if (shop && shop.error) sales = 'closed'; // e.g. "The booking period for this event is over."
   else if (!tickets.length) sales = 'none';
   else if (available.length) sales = 'open';
   else if (tickets.some((t) => t.reserved)) sales = 'reserved'; // the rest sit in other buyers' carts
-  else sales = 'sold_out';
+  else if (tickets.every((t) => t.not_on_sale)) { // outside every ticket's own sale window
+    sales = 'closed';
+    const soon = tickets.some((t) => t.not_on_sale === 'soon');
+    salesNote = soon ? 'Tickets are not on sale yet.' : 'Ticket sales for this event are closed.';
+    if (soon) availability = { reason: 'soon', text: '' };
+  } else sales = 'sold_out';
 
   return {
     pageFailed,
@@ -242,9 +270,9 @@ async function eventDetail(entry, signal) {
       tickets,
       price_from: prices.length ? Math.min(...prices).toFixed(2) : null,
       price_to: prices.length ? Math.max(...prices).toFixed(2) : null,
-      availability: entry.availability,
+      availability,
       sales,
-      sales_note: shop && shop.error ? text(shop.error) : null,
+      sales_note: salesNote,
       waiting_list: Boolean(shop && shop.waiting_list_enabled),
       tickets_url: entry.tickets_url,
       ics_url: `${entry.tickets_url}ical/`,
@@ -274,12 +302,19 @@ function shopTickets(shop) {
   const out = [];
   for (const cat of shop.items_by_category || []) {
     for (const it of cat.items || []) {
-      const units = it.has_variations && Array.isArray(it.variations) ? it.variations : [it];
-      const open = units.filter((u) => availOf(u)[0] === 100); // pretix AVAILABILITY_OK
-      const held = units.filter((u) => availOf(u)[0] === 20); // pretix AVAILABILITY_RESERVED: in other buyers' carts
+      if (HIDDEN_REASONS.has(it.current_unavailability_reason)) continue;
+      const units = it.has_variations && Array.isArray(it.variations)
+        ? it.variations.filter((v) => !HIDDEN_REASONS.has(v.current_unavailability_reason))
+        : [it];
+      if (!units.length) continue;
+      // Outside the ticket's own sale window: pretix says available_from or available_until.
+      const windowOf = (u) => it.current_unavailability_reason || (u !== it && u.current_unavailability_reason) || null;
+      const open = units.filter((u) => availOf(u)[0] === 100 && !windowOf(u)); // pretix AVAILABILITY_OK
+      const held = units.filter((u) => availOf(u)[0] === 20 && !windowOf(u)); // AVAILABILITY_RESERVED: in other buyers' carts
       const pool = open.length ? open : held.length ? held : units; // price what can be bought, else what may come back
       const prices = pool.map(priceOf).filter(Number.isFinite);
       const left = open.map((u) => availOf(u)[1]).filter(Number.isFinite); // only set if "show quota left" is on
+      const windows = units.map(windowOf);
       out.push({
         id: it.id,
         name: text(it.name),
@@ -289,6 +324,9 @@ function shopTickets(shop) {
         free_price: Boolean(it.free_price),
         available: open.length > 0,
         reserved: !open.length && held.length > 0,
+        not_on_sale: !open.length && !held.length && windows.every(Boolean)
+          ? (windows.includes('available_from') ? 'soon' : 'ended')
+          : null,
         left: left.length ? left.reduce((sum, n) => sum + n, 0) : null,
       });
     }

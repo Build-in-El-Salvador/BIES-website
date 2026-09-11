@@ -69,8 +69,8 @@ wrangler.jsonc  .assetsignore
   lists, description, tickets, prices, availability) and each event page's JSON-LD
   (exact start/end) and `og:image` (the event's "Social media image", used as the
   cover). Cached 2 minutes at the edge, plus a 7-day last-good copy for outages. If
-  some event details fail, only the date, cover and description are filled from that
-  copy (never tickets or sales state); the result is kept 30 seconds and never replaces
+  some event details fail, only the date, cover, description and API extras are filled
+  from that copy (never tickets or sales state); the result is kept 30 seconds and never replaces
   it. The build has a 9-second deadline (the page waits 12); the past list and API
   extras get 3 seconds. It only runs on buildinelsalvador.com, www and localhost.
 - Optional Worker secret `PRETIX_TOKEN` (a read-only pretix team token, dashboard →

@@ -366,7 +366,8 @@
       const row = h('li', { class: `ev-ticket${t.available ? '' : ' is-out'}` },
         h('div', { class: 'ev-ticket-top' }, h('span', { class: 'ev-ticket-name', text: t.name }), h('span', { class: 'ev-ticket-price', text: price })));
       if (hasText(t.description_html)) row.append(h('div', { class: 'ev-ticket-desc' }, richHtml(t.description_html)));
-      if (!t.available) row.append(h('span', { class: 'ev-ticket-state', text: t.reserved ? 'In carts' : 'Sold out' }));
+      const state = t.reserved ? 'In carts' : t.not_on_sale === 'soon' ? 'Not on sale yet' : t.not_on_sale ? 'No longer on sale' : 'Sold out';
+      if (!t.available) row.append(h('span', { class: 'ev-ticket-state', text: state }));
       else if (Number.isFinite(t.left) && t.left <= 10) row.append(h('span', { class: 'ev-ticket-state', text: `${t.left} left` }));
       list.append(row);
     }
@@ -489,9 +490,12 @@
       const about = richHtml(ev.description_html).textContent.replace(/\s+/g, ' ').trim();
       if (about) node.description = about.slice(0, 300);
       if (ev.tickets.length) {
+        const soon = ev.availability && ev.availability.reason === 'soon';
+        const state = (t) => (ev.sales === 'closed' ? (soon ? 'PreSale' : 'SoldOut')
+          : t.available ? 'InStock' : t.reserved ? 'LimitedAvailability' : t.not_on_sale === 'soon' ? 'PreSale' : 'SoldOut');
         node.offers = ev.tickets.map((t) => ({
           '@type': 'Offer', name: t.name, price: t.price, priceCurrency: ev.currency, url: ev.tickets_url,
-          availability: `https://schema.org/${t.available ? 'InStock' : t.reserved ? 'LimitedAvailability' : 'SoldOut'}`,
+          availability: `https://schema.org/${state(t)}`,
         }));
       }
       return node;
@@ -539,14 +543,15 @@
     }
     // A saved copy (served while pretix is down) can be days old: an event that has ended
     // since the copy was built moves to Past, without a ticket button. pretix had already
-    // sorted anything that ended before then. No end time: assume six hours.
+    // sorted anything that ended before then, and fresh data is minutes old, so only saved
+    // copies are checked (a wrong device clock can't hide a live event). No end: six hours.
     const built = Date.parse(data.generated_at) || 0;
     const ended = (ev) => {
       const s = toDate(ev.start), e = toDate(ev.end) || (s && new Date(s.getTime() + 6 * 3600e3));
       return Boolean(e && e.getTime() < Date.now() && e.getTime() >= built);
     };
     const listed = data.upcoming.map(normalise).filter((ev) => SLUG_RE.test(ev.slug));
-    for (const ev of listed) if (ended(ev)) { ev.is_past = true; ev.sales = 'past'; }
+    if (data.stale) for (const ev of listed) if (ended(ev)) { ev.is_past = true; ev.sales = 'past'; }
     const upcoming = listed.filter((ev) => !ev.is_past);
     const onList = new Set(listed.map((ev) => ev.slug)); // an event in both lists keeps its upcoming copy
     const previous = [...listed.filter((ev) => ev.is_past),
