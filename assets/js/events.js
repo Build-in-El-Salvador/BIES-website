@@ -115,12 +115,21 @@
     if (isLive(ev)) out.push(['Happening now', 'live']);
     const price = priceLabel(ev);
     if (price) out.push([price, price === 'Free' ? 'free' : 'price']);
+    // The shop data (ev.sales) is fresher than the organizer list's reason, so it decides
+    // whenever it has an answer; the list's reason only fills in when it does not.
     const r = ev.availability && ev.availability.reason;
-    if (r === 'waitinglist') out.push(['Waiting list open', 'wait']);
-    else if (ev.sales === 'sold_out' || r === 'full' || r === 'reserved') out.push(['Sold out', 'out']);
+    if (ev.sales === 'sold_out' || ev.sales === 'reserved') {
+      if (ev.waiting_list) out.push(['Waiting list open', 'wait']);
+      else if (ev.sales === 'reserved') out.push(['Almost sold out', 'low']); // the rest sit in carts
+      else out.push(['Sold out', 'out']);
+    } else if (ev.sales === 'closed') out.push(r === 'soon' ? ['Tickets soon', 'soon'] : ['Sales closed', 'out']);
+    else if (ev.sales === 'open') { if (r === 'low') out.push(['Few left', 'low']); }
+    else if (r === 'waitinglist') out.push(['Waiting list open', 'wait']);
+    else if (r === 'reserved') out.push(['Almost sold out', 'low']);
+    else if (r === 'full') out.push(['Sold out', 'out']);
     else if (r === 'low') out.push(['Few left', 'low']);
     else if (r === 'soon') out.push(['Tickets soon', 'soon']);
-    else if (ev.sales === 'closed' || r === 'over') out.push(['Sales closed', 'out']);
+    else if (r === 'over') out.push(['Sales closed', 'out']);
     return out;
   }
   const chipEl = ([label, kind]) => h('span', { class: `ev-chip ev-chip-${kind}`, text: label });
@@ -175,7 +184,8 @@
   }
   function richHtml(html) {
     const doc = new DOMParser().parseFromString(`<div>${html || ''}</div>`, 'text/html');
-    const root = doc.body.firstElementChild;
+    const root = doc.body && doc.body.firstElementChild;
+    if (!root) return document.createDocumentFragment(); // e.g. a bare <frameset> swallowed the wrapper
     cleanTree(root, doc);
     unwrapLines(root);
     for (const p of Array.from(root.querySelectorAll('p'))) if (!p.textContent.trim() && !p.querySelector('br')) p.remove();
@@ -356,7 +366,7 @@
       const row = h('li', { class: `ev-ticket${t.available ? '' : ' is-out'}` },
         h('div', { class: 'ev-ticket-top' }, h('span', { class: 'ev-ticket-name', text: t.name }), h('span', { class: 'ev-ticket-price', text: price })));
       if (hasText(t.description_html)) row.append(h('div', { class: 'ev-ticket-desc' }, richHtml(t.description_html)));
-      if (!t.available) row.append(h('span', { class: 'ev-ticket-state', text: 'Sold out' }));
+      if (!t.available) row.append(h('span', { class: 'ev-ticket-state', text: t.reserved ? 'In carts' : 'Sold out' }));
       else if (Number.isFinite(t.left) && t.left <= 10) row.append(h('span', { class: 'ev-ticket-state', text: `${t.left} left` }));
       list.append(row);
     }
@@ -365,6 +375,11 @@
       say(ev.sales_note || 'Ticket sales for this event are closed.');
       get.textContent = 'View on ticket site';
       get.className = 'btn btn-ghost ev-get';
+    } else if (ev.sales === 'reserved') {
+      say(ev.waiting_list
+        ? 'The last tickets are sitting in carts right now. Join the waiting list and you will be emailed if one frees up.'
+        : 'The last tickets are sitting in carts right now. Unpaid carts are released, so check back shortly.');
+      get.textContent = ev.waiting_list ? 'Join the waiting list' : 'Check the ticket site';
     } else if (ev.sales === 'sold_out') {
       say(ev.waiting_list ? 'Sold out. Join the waiting list and you will be emailed if a spot opens up.' : 'This event is sold out.');
       get.textContent = ev.waiting_list ? 'Join the waiting list' : 'View on ticket site';
@@ -476,7 +491,7 @@
       if (ev.tickets.length) {
         node.offers = ev.tickets.map((t) => ({
           '@type': 'Offer', name: t.name, price: t.price, priceCurrency: ev.currency, url: ev.tickets_url,
-          availability: `https://schema.org/${t.available ? 'InStock' : 'SoldOut'}`,
+          availability: `https://schema.org/${t.available ? 'InStock' : t.reserved ? 'LimitedAvailability' : 'SoldOut'}`,
         }));
       }
       return node;
@@ -522,8 +537,21 @@
       $('ev-fallback').hidden = false;
       return;
     }
-    const upcoming = data.upcoming.map(normalise).filter((ev) => SLUG_RE.test(ev.slug));
-    const previous = (data.past || []).map(normalise).filter((ev) => SLUG_RE.test(ev.slug));
+    // A saved copy (served while pretix is down) can be days old: an event that has ended
+    // since the copy was built moves to Past, without a ticket button. pretix had already
+    // sorted anything that ended before then. No end time: assume six hours.
+    const built = Date.parse(data.generated_at) || 0;
+    const ended = (ev) => {
+      const s = toDate(ev.start), e = toDate(ev.end) || (s && new Date(s.getTime() + 6 * 3600e3));
+      return Boolean(e && e.getTime() < Date.now() && e.getTime() >= built);
+    };
+    const listed = data.upcoming.map(normalise).filter((ev) => SLUG_RE.test(ev.slug));
+    for (const ev of listed) if (ended(ev)) { ev.is_past = true; ev.sales = 'past'; }
+    const upcoming = listed.filter((ev) => !ev.is_past);
+    const onList = new Set(listed.map((ev) => ev.slug)); // an event in both lists keeps its upcoming copy
+    const previous = [...listed.filter((ev) => ev.is_past),
+      ...(data.past || []).map(normalise).filter((ev) => SLUG_RE.test(ev.slug) && !onList.has(ev.slug))]
+      .sort((a, b) => (toDate(b.start) || 0) - (toDate(a.start) || 0));
     for (const ev of [...upcoming, ...previous]) bySlug.set(ev.slug, ev);
 
     renderList(up, upcoming, false);

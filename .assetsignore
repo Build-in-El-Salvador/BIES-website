@@ -4,6 +4,7 @@
 .gitignore
 .assetsignore
 .dev.vars*
+.env*
 .wrangler
 node_modules
 wrangler.jsonc
@@ -13,5 +14,8 @@ src
 CNAME
 .nojekyll
 .DS_Store
+.claude
+.vscode
+.idea
 # Local-preview data for events.html (python3 -m http.server); never needed live.
 assets/data

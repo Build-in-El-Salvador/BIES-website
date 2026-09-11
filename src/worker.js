@@ -21,16 +21,22 @@ const CFG = {
   org: 'bies',
   orgName: 'Build in El Salvador',
   timezone: 'America/El_Salvador', // every BIES event; the optional API token can override per event
+  // /api/events is only built for these hosts (and local previews). The Cache API does
+  // nothing on *.workers.dev, so every request there would re-read pretix ~30 times.
+  hosts: ['buildinelsalvador.com', 'www.buildinelsalvador.com'],
   maxUpcoming: 8,
   maxPast: 6, // 2 list requests + 2 per event + 1 optional API call stays well under the 50-subrequest limit
   freshSeconds: 120, // how long one built copy is served before pretix is asked again
+  retrySeconds: 30, // how long a build that lost some event details is served before retrying
   lastGoodSeconds: 7 * 24 * 3600, // how long the last good copy is kept to ride out a pretix outage
   browserSeconds: 60,
-  timeoutMs: 8000,
+  buildMs: 9000, // one deadline for the whole build, under the Events page's 12 s wait (events.js)
+  optionalMs: 3000, // the past list and the API extras, so upcoming events never wait on them
 };
 
 const ORG_URL = `${CFG.pretix}/${CFG.org}/`;
 const EVENT_URL_RE = new RegExp(`^${escapeRe(ORG_URL)}([A-Za-z0-9][A-Za-z0-9._-]{0,49})/$`);
+const LOCAL_HOST_RE = /^(localhost|127\.0\.0\.1|\[::1\])$/;
 
 export default {
   async fetch(request, env, ctx) {
@@ -47,62 +53,119 @@ async function eventsRoute(request, env, ctx) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return json({ error: 'method_not_allowed' }, 405, 0, { Allow: 'GET, HEAD' });
   }
-  const origin = new URL(request.url).origin;
-  const freshKey = new Request(`${origin}/api/events`);
-  const lastGoodKey = new Request(`${origin}/api/events?last-good`);
-  const cache = caches.default; // per data centre; a no-op on *.workers.dev and in local dev
+  const url = new URL(request.url);
+  const host = url.hostname.replace(/\.$/, '');
+  if (!CFG.hosts.includes(host) && !LOCAL_HOST_RE.test(host)) {
+    return json({ error: 'not_found' }, 404);
+  }
+  const freshKey = new Request(`${url.origin}/api/events`);
+  const lastGoodKey = new Request(`${url.origin}/api/events?last-good`);
+  const cache = caches.default; // per data centre; a no-op in local dev
 
   const hit = await cache.match(freshKey);
   if (hit) return withBrowserCache(hit);
 
+  let built;
   try {
-    const body = JSON.stringify(await buildEvents(env));
-    ctx.waitUntil(
-      Promise.all([
-        cache.put(freshKey, json(body, 200, CFG.freshSeconds)),
-        cache.put(lastGoodKey, json(body, 200, CFG.lastGoodSeconds)),
-      ]).catch((err) => warn('cache write failed', err)),
-    );
-    return json(body, 200, CFG.browserSeconds);
+    built = await buildEvents(env);
   } catch (err) {
     console.error('events: build failed', err && err.stack ? err.stack : String(err));
-    const saved = await cache.match(lastGoodKey);
+    const saved = await readJson(cache, lastGoodKey);
     if (saved) {
-      const data = await saved.json();
-      data.stale = true;
-      return json(data, 200, 0);
+      saved.stale = true;
+      return json(saved, 200, 0);
     }
     return json({ error: 'unavailable', fallback_url: ORG_URL }, 503, 0);
   }
+
+  const { data, gaps } = built;
+  if (gaps.past || gaps.page.size || gaps.shop.size) {
+    // pretix answered the upcoming list but not everything else. Fill what it can from the
+    // last good copy, keep this build only briefly, and never let it replace that copy.
+    console.warn(`events: partial build (past list ${gaps.past ? 'failed' : 'ok'}; `
+      + `pages failed: ${[...gaps.page].join(', ') || 'none'}; shops failed: ${[...gaps.shop].join(', ') || 'none'})`);
+    fillGaps(data, gaps, await readJson(cache, lastGoodKey));
+    const body = JSON.stringify(data);
+    ctx.waitUntil(cache.put(freshKey, json(body, 200, CFG.retrySeconds)).catch((err) => warn('cache write failed', err)));
+    return json(body, 200, CFG.retrySeconds);
+  }
+
+  const body = JSON.stringify(data);
+  ctx.waitUntil(
+    Promise.all([
+      cache.put(freshKey, json(body, 200, CFG.freshSeconds)),
+      cache.put(lastGoodKey, json(body, 200, CFG.lastGoodSeconds)),
+    ]).catch((err) => warn('cache write failed', err)),
+  );
+  return json(body, 200, CFG.browserSeconds);
 }
 
 async function buildEvents(env) {
-  const [upcomingList, pastList, api] = await Promise.all([
-    getJson(`${ORG_URL}widget/product_list?lang=en`), // pretix's own "upcoming, live, public" list
-    getJson(`${ORG_URL}widget/product_list?lang=en&old=1`).catch((err) => {
-      warn('past list skipped', err);
-      return { events: [] };
-    }),
-    apiIndex(env).catch((err) => {
+  const signal = AbortSignal.timeout(CFG.buildMs); // shared by every request the upcoming events need
+  const gaps = { past: false, page: new Set(), shop: new Set() };
+  const details = (entries) => Promise.all(entries.map((entry) => eventDetail(entry, signal)));
+  // Upcoming events start loading their details as soon as their list arrives. The past
+  // list and the API extras are optional and get a shorter timeout of their own.
+  const [upcoming, past, api] = await Promise.all([
+    getList(`${ORG_URL}widget/product_list?lang=en&style=list`, signal) // pretix's own "upcoming, live, public" list
+      .then((list) => details(listEntries(list, false).slice(0, CFG.maxUpcoming))),
+    getList(`${ORG_URL}widget/product_list?lang=en&old=1&style=list`, AbortSignal.timeout(CFG.optionalMs))
+      .then((list) => details(listEntries(list, true).slice(0, CFG.maxPast)))
+      .catch((err) => {
+        warn('past list skipped', err);
+        gaps.past = true;
+        return [];
+      }),
+    apiIndex(env, AbortSignal.timeout(CFG.optionalMs)).catch((err) => {
       warn('API extras skipped', err);
       return null;
     }),
   ]);
 
-  const entries = [
-    ...listEntries(upcomingList, false).slice(0, CFG.maxUpcoming),
-    ...listEntries(pastList, true).slice(0, CFG.maxPast),
-  ];
-  const events = await Promise.all(entries.map((entry) => eventDetail(entry, api)));
-  const byStart = (a, b) => (Date.parse(a.start) || 0) - (Date.parse(b.start) || 0);
+  for (const d of [...upcoming, ...past]) {
+    if (d.pageFailed) gaps.page.add(d.event.slug);
+    if (d.shopFailed) gaps.shop.add(d.event.slug);
+    applyExtras(d.event, api && api.get(d.event.slug));
+  }
+  const events = [...upcoming, ...past].map((d) => d.event);
 
   return {
-    generated_at: new Date().toISOString(),
-    stale: false,
-    organizer: { name: CFG.orgName, url: ORG_URL, ics_url: `${ORG_URL}events/ical/` },
-    upcoming: events.filter((e) => !e.is_past).sort(byStart),
-    past: events.filter((e) => e.is_past).sort((a, b) => byStart(b, a)),
+    gaps,
+    data: {
+      generated_at: new Date().toISOString(),
+      stale: false,
+      organizer: { name: CFG.orgName, url: ORG_URL, ics_url: `${ORG_URL}events/ical/` },
+      upcoming: events.filter((e) => !e.is_past).sort(byStart),
+      past: events.filter((e) => e.is_past).sort(byStartDesc),
+    },
   };
+}
+
+// Fill what failed from the last good build, field by field. The date, cover and
+// description rarely change, so an older copy of those is fine. Ticket and sales data are
+// never copied: an event whose shop data failed shows "View on ticket site" rather than an
+// outdated "on sale".
+function fillGaps(data, gaps, saved) {
+  if (!saved) return;
+  const old = new Map([...(saved.upcoming || []), ...(saved.past || [])].map((e) => [e.slug, e]));
+  for (const ev of [...data.upcoming, ...data.past]) {
+    const prev = old.get(ev.slug);
+    if (!prev) continue;
+    if (gaps.page.has(ev.slug)) {
+      if (!ev.start) {
+        ev.start = prev.start || null;
+        ev.end = prev.end || null;
+      }
+      if (!ev.cover) ev.cover = prev.cover || null;
+    }
+    if (gaps.shop.has(ev.slug) && !ev.description_html) ev.description_html = prev.description_html || '';
+  }
+  if (gaps.past && Array.isArray(saved.past)) {
+    const listed = new Set(data.upcoming.map((e) => e.slug));
+    data.past = saved.past.filter((e) => e && !listed.has(e.slug));
+  }
+  data.upcoming.sort(byStart);
+  data.past.sort(byStartDesc);
 }
 
 function listEntries(list, isPast) {
@@ -126,23 +189,23 @@ function listEntries(list, isPast) {
     .filter(Boolean);
 }
 
-async function eventDetail(entry, api) {
+async function eventDetail(entry, signal) {
+  let pageFailed = false;
+  let shopFailed = false;
   const [page, shop] = await Promise.all([
-    getText(entry.tickets_url).catch((err) => {
+    getText(entry.tickets_url, signal).catch((err) => {
       warn(`event page ${entry.slug}`, err);
+      pageFailed = true;
       return '';
     }),
-    getJson(`${entry.tickets_url}widget/product_list?lang=en`).catch((err) => {
+    getJson(`${entry.tickets_url}widget/product_list?lang=en`, {}, signal).catch((err) => {
       warn(`shop data ${entry.slug}`, err);
+      shopFailed = true;
       return null;
     }),
   ]);
 
   const ld = eventJsonLd(page); // pretix renders schema.org Event JSON-LD with exact UTC start/end
-  const extra = (api && api.get(entry.slug)) || {};
-  const geo = Number.isFinite(extra.geo_lat) && Number.isFinite(extra.geo_lon)
-    ? { lat: extra.geo_lat, lon: extra.geo_lon }
-    : null;
   const tickets = shop ? shopTickets(shop) : [];
   const available = tickets.filter((t) => t.available);
   const prices = (available.length ? available : tickets)
@@ -154,37 +217,55 @@ async function eventDetail(entry, api) {
   else if (shop && shop.error) sales = 'closed'; // e.g. "The booking period for this event is over."
   else if (!tickets.length) sales = 'none';
   else if (available.length) sales = 'open';
+  else if (tickets.some((t) => t.reserved)) sales = 'reserved'; // the rest sit in other buyers' carts
   else sales = 'sold_out';
 
   return {
-    slug: entry.slug,
-    title: entry.title || text(shop && shop.name) || text(ld.name),
-    start: text(extra.date_from) || text(ld.startDate) || null,
-    end: text(extra.date_to) || text(ld.endDate) || null,
-    timezone: text(extra.timezone) || CFG.timezone,
-    date_range: entry.date_range || text(shop && shop.date_range),
-    location: entry.location || null,
-    geo,
-    map_url: mapUrl(geo, entry.location),
-    host: text(extra.host) || CFG.orgName,
-    status: ['cancelled', 'postponed'].includes(text(extra.status).toLowerCase())
-      ? text(extra.status).toLowerCase()
-      : null,
-    // The event's "Social media image" in pretix (Settings -> Shop design) is the cover.
-    cover: safeUrl(metaContent(page, 'og:image') || firstImage(ld.image), entry.tickets_url),
-    description_html: shop ? String(shop.frontpage_text || '') : '', // pretix-sanitised Markdown output
-    currency: text(shop && shop.currency) || 'USD',
-    tickets,
-    price_from: prices.length ? Math.min(...prices).toFixed(2) : null,
-    price_to: prices.length ? Math.max(...prices).toFixed(2) : null,
-    availability: entry.availability,
-    sales,
-    sales_note: shop && shop.error ? text(shop.error) : null,
-    waiting_list: Boolean(shop && shop.waiting_list_enabled),
-    tickets_url: entry.tickets_url,
-    ics_url: `${entry.tickets_url}ical/`,
-    is_past: entry.is_past,
+    pageFailed,
+    shopFailed,
+    event: {
+      slug: entry.slug,
+      title: entry.title || text(shop && shop.name) || text(ld.name),
+      start: text(ld.startDate) || null,
+      end: text(ld.endDate) || null,
+      timezone: CFG.timezone,
+      date_range: entry.date_range || text(shop && shop.date_range),
+      location: entry.location || null,
+      geo: null,
+      map_url: mapUrl(null, entry.location),
+      host: CFG.orgName,
+      status: null,
+      // The event's "Social media image" in pretix (Settings -> Shop design) is the cover.
+      cover: safeUrl(metaContent(page, 'og:image') || firstImage(ld.image), entry.tickets_url),
+      description_html: shop ? String(shop.frontpage_text || '') : '', // pretix-sanitised Markdown output
+      currency: text(shop && shop.currency) || 'USD',
+      tickets,
+      price_from: prices.length ? Math.min(...prices).toFixed(2) : null,
+      price_to: prices.length ? Math.max(...prices).toFixed(2) : null,
+      availability: entry.availability,
+      sales,
+      sales_note: shop && shop.error ? text(shop.error) : null,
+      waiting_list: Boolean(shop && shop.waiting_list_enabled),
+      tickets_url: entry.tickets_url,
+      ics_url: `${entry.tickets_url}ical/`,
+      is_past: entry.is_past,
+    },
   };
+}
+
+// The optional API token's extras take precedence over what the public pages gave.
+function applyExtras(ev, extra) {
+  if (!extra) return;
+  ev.start = text(extra.date_from) || ev.start;
+  ev.end = text(extra.date_to) || ev.end;
+  ev.timezone = text(extra.timezone) || ev.timezone;
+  if (Number.isFinite(extra.geo_lat) && Number.isFinite(extra.geo_lon)) {
+    ev.geo = { lat: extra.geo_lat, lon: extra.geo_lon };
+    ev.map_url = mapUrl(ev.geo, ev.location);
+  }
+  ev.host = text(extra.host) || ev.host;
+  const status = text(extra.status).toLowerCase();
+  if (status === 'cancelled' || status === 'postponed') ev.status = status;
 }
 
 function shopTickets(shop) {
@@ -193,11 +274,12 @@ function shopTickets(shop) {
   const out = [];
   for (const cat of shop.items_by_category || []) {
     for (const it of cat.items || []) {
-      const variations = it.has_variations && Array.isArray(it.variations) ? it.variations : null;
-      const prices = (variations || [it]).map(priceOf).filter(Number.isFinite);
-      const avails = (variations || [it]).map(availOf);
-      const open = avails.filter((a) => a[0] === 100); // pretix AVAILABILITY_OK
-      const left = open.map((a) => a[1]).filter(Number.isFinite); // only set if "show quota left" is on
+      const units = it.has_variations && Array.isArray(it.variations) ? it.variations : [it];
+      const open = units.filter((u) => availOf(u)[0] === 100); // pretix AVAILABILITY_OK
+      const held = units.filter((u) => availOf(u)[0] === 20); // pretix AVAILABILITY_RESERVED: in other buyers' carts
+      const pool = open.length ? open : held.length ? held : units; // price what can be bought, else what may come back
+      const prices = pool.map(priceOf).filter(Number.isFinite);
+      const left = open.map((u) => availOf(u)[1]).filter(Number.isFinite); // only set if "show quota left" is on
       out.push({
         id: it.id,
         name: text(it.name),
@@ -206,6 +288,7 @@ function shopTickets(shop) {
         price_varies: new Set(prices).size > 1,
         free_price: Boolean(it.free_price),
         available: open.length > 0,
+        reserved: !open.length && held.length > 0,
         left: left.length ? left.reduce((sum, n) => sum + n, 0) : null,
       });
     }
@@ -214,11 +297,12 @@ function shopTickets(shop) {
 }
 
 // Optional: only runs when the PRETIX_TOKEN secret exists. One request for all events.
-async function apiIndex(env) {
+async function apiIndex(env, signal) {
   if (!env.PRETIX_TOKEN) return null;
   const data = await getJson(
     `${CFG.pretix}/api/v1/organizers/${CFG.org}/events/?live=true&is_public=true&ordering=-date_from`,
     { Authorization: `Token ${env.PRETIX_TOKEN}` },
+    signal,
   );
   const index = new Map();
   for (const ev of data.results || []) {
@@ -238,17 +322,41 @@ async function apiIndex(env) {
 
 // ---------- small helpers ----------
 
-async function fetchOk(url, headers = {}) {
+async function fetchOk(url, headers = {}, signal = AbortSignal.timeout(CFG.buildMs)) {
   const res = await fetch(url, {
     headers: { 'User-Agent': 'bies-website-events/1', 'Accept-Language': 'en', ...headers },
-    signal: AbortSignal.timeout(CFG.timeoutMs),
+    signal,
   });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
   return res;
 }
-const getJson = (url, headers) =>
-  fetchOk(url, { Accept: 'application/json', ...headers }).then((r) => r.json());
-const getText = (url) => fetchOk(url, { Accept: 'text/html' }).then((r) => r.text());
+const getJson = (url, headers, signal) =>
+  fetchOk(url, { Accept: 'application/json', ...headers }, signal).then((r) => r.json());
+const getText = (url, signal) => fetchOk(url, { Accept: 'text/html' }, signal).then((r) => r.text());
+
+// style=list in the URL pins the layout: without it pretix answers in the organizer's
+// "Default overview style", and its calendar and week layouts have no `events` array.
+async function getList(url, signal) {
+  const data = await getJson(url, {}, signal);
+  if (!data || !Array.isArray(data.events)) throw new Error(`no event list in ${url}`);
+  return data;
+}
+
+async function readJson(cache, key) {
+  try {
+    const r = await cache.match(key);
+    return r ? await r.json() : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function byStart(a, b) {
+  return (Date.parse(a.start) || 0) - (Date.parse(b.start) || 0);
+}
+function byStartDesc(a, b) {
+  return byStart(b, a);
+}
 
 function eventJsonLd(html) {
   const re = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
@@ -327,9 +435,12 @@ function warn(label, err) {
   console.warn(`events: ${label}:`, err && err.message ? err.message : String(err));
 }
 
+// A cached copy never tells browsers to keep it longer than the edge does (30 s for a partial build).
 function withBrowserCache(response) {
   const r = new Response(response.body, response);
-  r.headers.set('Cache-Control', `public, max-age=${CFG.browserSeconds}`);
+  const stored = /max-age=(\d+)/.exec(response.headers.get('Cache-Control') || '');
+  const maxAge = Math.min(CFG.browserSeconds, stored ? Number(stored[1]) : CFG.browserSeconds);
+  r.headers.set('Cache-Control', `public, max-age=${maxAge}`);
   return r;
 }
 

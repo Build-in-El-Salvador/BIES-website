@@ -1,5 +1,7 @@
 # Local Worker development (npx wrangler dev). .dev.vars can hold PRETIX_TOKEN: never commit it.
 .dev.vars*
+# wrangler also reads .env files (API tokens, Worker secrets).
+.env*
 .wrangler/
 node_modules/
 .DS_Store
