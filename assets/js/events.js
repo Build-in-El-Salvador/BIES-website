@@ -13,7 +13,12 @@
   const SAMPLE = '/assets/data/events.sample.json'; // only tried when previewing on localhost
   const HOME_TZ = 'America/El_Salvador';
   const SLUG_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,49}$/;
-  const PAGE_URL = location.origin + location.pathname.replace(/\.html$/, '');
+  const EVENTS_PATH = '/events';
+  // Each event has its own address, /events/sn260926, whose link preview the Worker fills
+  // with the event's title and cover (src/worker.js). Codes match in any case.
+  const PATH_RE = /^\/events\/([^/]+)\/?$/;
+  const eventPath = (slug) => `${EVENTS_PATH}/${String(slug).toLowerCase()}`;
+  const eventUrl = (slug) => location.origin + eventPath(slug);
   const IS_LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   const VIEWER_TZ = (() => {
     try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (_) { return ''; }
@@ -27,6 +32,7 @@
   };
 
   const bySlug = new Map();
+  const bySlugLower = new Map(); // lower-case code -> pretix's slug, so /events/sn260926 finds SN260926
   const dialog = document.getElementById('ev-dialog');
   const $ = (id) => document.getElementById(id);
   const baseTitle = document.title;
@@ -247,7 +253,7 @@
     if (s) time.append(timeRange(ev, tz), ' ', h('span', { class: 'ev-tz', text: offsetLabel(s, tz) }));
     else time.append(ev.date_range || 'Date to be announced');
 
-    const link = h('a', { class: 'ev-card-link', href: `#${ev.slug}`, 'data-slug': ev.slug, 'aria-haspopup': 'dialog' },
+    const link = h('a', { class: 'ev-card-link', href: eventPath(ev.slug), 'data-slug': ev.slug, 'aria-haspopup': 'dialog' },
       h('div', { class: 'ev-card-body' },
         time,
         h('h3', { class: 'ev-card-title', text: ev.title }),
@@ -296,7 +302,7 @@
     const stamp = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     return `https://calendar.google.com/calendar/render?${new URLSearchParams({
       action: 'TEMPLATE', text: ev.title, dates: `${stamp(s)}/${stamp(e)}`, ctz: tzOf(ev),
-      location: ev.location || '', details: `Details and tickets: ${PAGE_URL}#${ev.slug}`,
+      location: ev.location || '', details: `Details and tickets: ${eventUrl(ev.slug)}`,
     })}`;
   }
 
@@ -418,7 +424,7 @@
     const ev = bySlug.get(slug);
     if (!ev || typeof dialog.showModal !== 'function') return false;
     fill(ev);
-    if (push) history.pushState({ evSlug: slug }, '', `#${slug}`);
+    if (push) history.pushState({ evSlug: slug }, '', eventPath(slug));
     if (!dialog.open) {
       opener = document.activeElement;
       dialog.showModal();
@@ -430,10 +436,13 @@
     return true;
   }
 
-  function hashSlug() {
+  // The event a URL points at: /events/sn260926, or the older #SN260926 form. Returns
+  // pretix's slug for an event on this page, else null; the URL is only used to look up.
+  function routeSlug() {
+    const path = PATH_RE.exec(location.pathname);
     let raw = '';
-    try { raw = decodeURIComponent(location.hash.slice(1)); } catch (_) { return null; }
-    return SLUG_RE.test(raw) ? raw : null;
+    try { raw = decodeURIComponent(path ? path[1] : location.hash.slice(1)); } catch (_) { return null; }
+    return SLUG_RE.test(raw) ? bySlugLower.get(raw.toLowerCase()) || null : null;
   }
 
   dialog.addEventListener('close', () => {
@@ -443,12 +452,12 @@
     opener = null;
     if (closingFromHistory) { closingFromHistory = false; return; }
     if (history.state && history.state.evSlug) history.back();
-    else if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    else if (location.hash || PATH_RE.test(location.pathname)) history.replaceState(null, '', EVENTS_PATH + location.search);
   });
   dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); }); // backdrop click
   window.addEventListener('popstate', () => {
-    const slug = hashSlug();
-    if (slug && bySlug.has(slug)) openEvent(slug, false);
+    const slug = routeSlug();
+    if (slug) openEvent(slug, false);
     else if (dialog.open) { closingFromHistory = true; dialog.close(); }
   });
   document.addEventListener('click', (e) => {
@@ -458,7 +467,7 @@
   });
 
   async function share(ev, btn) {
-    const url = `${PAGE_URL}#${ev.slug}`;
+    const url = eventUrl(ev.slug);
     if (navigator.share) {
       try { await navigator.share({ title: ev.title, url }); return; } catch (err) { if (err && err.name === 'AbortError') return; }
     }
@@ -482,7 +491,7 @@
         startDate: ev.start,
         eventStatus: `https://schema.org/${ev.status === 'cancelled' ? 'EventCancelled' : ev.status === 'postponed' ? 'EventPostponed' : 'EventScheduled'}`,
         eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-        url: `${PAGE_URL}#${ev.slug}`,
+        url: eventUrl(ev.slug),
         organizer: { '@type': 'Organization', name: 'Build in El Salvador', url: 'https://buildinelsalvador.com/' },
       };
       if (ev.end) node.endDate = ev.end;
@@ -561,7 +570,7 @@
     const previous = [...listed.filter((ev) => ev.is_past),
       ...(data.past || []).map(normalise).filter((ev) => SLUG_RE.test(ev.slug) && !onList.has(ev.slug))]
       .sort((a, b) => (toDate(b.start) || 0) - (toDate(a.start) || 0));
-    for (const ev of [...upcoming, ...previous]) bySlug.set(ev.slug, ev);
+    for (const ev of [...upcoming, ...previous]) { bySlug.set(ev.slug, ev); bySlugLower.set(ev.slug.toLowerCase(), ev.slug); }
 
     renderList(up, upcoming, false);
     $('ev-empty').hidden = upcoming.length > 0;
@@ -573,8 +582,12 @@
     }
     jsonLd(upcoming);
 
-    const slug = hashSlug();
-    if (slug && bySlug.has(slug)) openEvent(slug, false);
+    const slug = routeSlug();
+    if (slug) {
+      openEvent(slug, false);
+      // Show the event's own address, also when an older #SN260926 link brought them here.
+      if (location.pathname + location.hash !== eventPath(slug)) history.replaceState(null, '', eventPath(slug) + location.search);
+    } else if (PATH_RE.test(location.pathname)) history.replaceState(null, '', EVENTS_PATH + location.search);
     else if (location.hash && !document.getElementById(location.hash.slice(1))) history.replaceState(null, '', location.pathname + location.search);
   }
 

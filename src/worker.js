@@ -4,9 +4,11 @@
  * The site is still a static site. Requests that match a file in the repo are
  * answered by the assets layer before this script runs (see wrangler.jsonc and
  * .assetsignore). This script only sees paths that match no file, and it adds
- * exactly one route:
+ * two routes:
  *
- *   GET /api/events  ->  the JSON that the Events page (events.html) renders.
+ *   GET /api/events         ->  the JSON that the Events page (events.html) renders.
+ *   GET /events/<code>      ->  the Events page with that event's link-preview tags,
+ *                               e.g. /events/sn260926 (see eventPage).
  *
  * pretix at tickets.buildinelsalvador.com is the single source of event data:
  * staff publish, edit and sell events there, and nobody edits this repo per
@@ -37,6 +39,8 @@ const CFG = {
 const ORG_URL = `${CFG.pretix}/${CFG.org}/`;
 const EVENT_URL_RE = new RegExp(`^${escapeRe(ORG_URL)}([A-Za-z0-9][A-Za-z0-9._-]{0,49})/$`);
 const LOCAL_HOST_RE = /^(localhost|127\.0\.0\.1|\[::1\])$/;
+const SITE_URL = 'https://buildinelsalvador.com';
+const EVENT_PAGE_RE = /^\/events\/([A-Za-z0-9][A-Za-z0-9._-]{0,49})\/?$/; // /events/sn260926
 // pretix product "current_unavailability_reason" values for tickets the public can't buy at
 // all: switched off, voucher-only, or hidden while another ticket is available. Left out.
 const HIDDEN_REASONS = new Set(['active', 'require_voucher', 'hidden_if_item_available']);
@@ -46,6 +50,8 @@ export default {
     const { pathname } = new URL(request.url);
     if (pathname === '/api/events') return eventsRoute(request, env, ctx);
     if (pathname.startsWith('/api/')) return json({ error: 'not_found' }, 404);
+    const page = EVENT_PAGE_RE.exec(pathname);
+    if (page && (request.method === 'GET' || request.method === 'HEAD')) return eventPage(request, env, ctx, page[1]);
     // Anything else that reached the script matched no file: let the assets
     // layer answer exactly as it did before this Worker had a script.
     return env.ASSETS.fetch(request);
@@ -101,6 +107,96 @@ async function eventsRoute(request, env, ctx) {
     ]).catch((err) => warn('cache write failed', err)),
   );
   return json(body, 200, CFG.browserSeconds);
+}
+
+// /events/<code>, e.g. /events/sn260926: the Events page with that event's title, date and
+// cover in its link-preview tags, so a link shared in WhatsApp, Slack or X shows the event
+// rather than the generic Events page. events.js opens the event's popup from the path.
+// The code only looks up an event pretix already listed (in any case); an unknown code
+// goes back to /events.
+async function eventPage(request, env, ctx, code) {
+  const url = new URL(request.url);
+  const base = await env.ASSETS.fetch(new Request(`${url.origin}/events`));
+  if (!base.ok) return base;
+  let ev = null;
+  try {
+    const api = await eventsRoute(new Request(`${url.origin}/api/events`), env, ctx);
+    if (api.ok) {
+      const data = await api.json();
+      const wanted = code.toLowerCase();
+      ev = [...(data.upcoming || []), ...(data.past || [])].find((e) => String(e.slug).toLowerCase() === wanted);
+      if (!ev) return Response.redirect(`${url.origin}/events`, 302);
+    }
+  } catch (err) {
+    warn('event page', err);
+  }
+  // Without event data (pretix down and nothing saved, or a host that doesn't build it)
+  // this is the plain Events page, whose script shows its own fallback.
+  const html = ev ? eventHead(await base.text(), ev) : await base.text();
+  return new Response(request.method === 'HEAD' ? null : html, {
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': `public, max-age=${CFG.browserSeconds}`,
+      'X-Content-Type-Options': 'nosniff',
+    },
+  });
+}
+
+// Rewrites events.html's title, description, canonical and Open Graph / Twitter tags for
+// one event. Every value from pretix is escaped; the tags are the ones events.html ships.
+function eventHead(html, ev) {
+  const pageUrl = `${SITE_URL}/events/${String(ev.slug).toLowerCase()}`;
+  const title = ev.title || CFG.orgName;
+  const description = eventSummary(ev);
+  const set = (attr, key, value) => {
+    html = html.replace(new RegExp(`(<meta ${attr}="${key}" content=")[^"]*(">)`), (m, open, close) => open + escAttr(value) + close);
+  };
+  html = html.replace(/<title>[^<]*<\/title>/, () => `<title>${escAttr(title)} | ${escAttr(CFG.orgName)}</title>`);
+  html = html.replace(/(<link rel="(?:canonical|alternate)"[^>]*href=")https:\/\/buildinelsalvador\.com\/events\.html(")/g,
+    (m, open, close) => open + pageUrl + close);
+  set('name', 'description', description);
+  set('property', 'og:title', title);
+  set('property', 'og:description', description);
+  set('property', 'og:url', pageUrl);
+  set('name', 'twitter:title', title);
+  set('name', 'twitter:description', description);
+  if (ev.cover) {
+    set('property', 'og:image', ev.cover);
+    set('name', 'twitter:image', ev.cover);
+    // The generic image's dimensions don't describe the event's cover.
+    html = html.replace(/<meta property="og:image:(?:width|height)" content="[^"]*">\n?/g, '');
+  }
+  return html;
+}
+
+// "Sat, Sep 26, 2026 · 5:00 – 11:00 PM · Shack Texas BBQ, El Boquerón. This is it. We're…"
+function eventSummary(ev) {
+  const about = String(ev.description_html || '')
+    .replace(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ');
+  const text = [[whenText(ev), ev.location].filter(Boolean).join(' · '), decodeEntities(about).replace(/\s+/g, ' ').trim()]
+    .filter(Boolean).join('. ');
+  return text.length > 200 ? `${text.slice(0, 197).replace(/\s+\S*$/, '')}…` : text;
+}
+
+function whenText(ev) {
+  const s = new Date(ev.start);
+  if (!ev.start || Number.isNaN(s.getTime())) return ev.date_range || '';
+  let tz = ev.timezone || CFG.timezone;
+  try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); } catch (_) { tz = CFG.timezone; }
+  const fmt = (d, opts) => new Intl.DateTimeFormat('en-US', { timeZone: tz, ...opts }).format(d);
+  const TIME = { hour: 'numeric', minute: '2-digit' };
+  const day = fmt(s, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  let from = fmt(s, TIME);
+  const e = ev.end ? new Date(ev.end) : null;
+  if (!e || Number.isNaN(e.getTime()) || fmt(e, { dateStyle: 'short' }) !== fmt(s, { dateStyle: 'short' })) return `${day} · ${from}`;
+  const to = fmt(e, TIME);
+  if (from.slice(-2) === to.slice(-2)) from = from.slice(0, -3); // "5:00 – 11:00 PM"
+  return `${day} · ${from} – ${to}`;
+}
+
+function escAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 async function buildEvents(env) {

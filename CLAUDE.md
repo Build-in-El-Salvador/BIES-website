@@ -77,6 +77,10 @@ wrangler.jsonc  .assetsignore
   Settings → Variables and Secrets) adds per-event `host` and `status` (organizer
   properties) and map coordinates. Without it the page still works. Never put the
   token in the repo; `.dev.vars` is git-ignored.
+- Share links: `/events/<code>` (e.g. `/events/sn260926`, any case) is the Events page with
+  that event's title, date and cover in its link-preview tags, filled in by the Worker, and
+  the page opens that event's popup. Older `/events#SN260926` links still open the popup
+  but preview as the generic Events page (link previews never see the `#` part).
 - Buying: the popup's button links to the pretix event page (new tab). The site loads
   no pretix script and sets no cookies.
 - If a Content-Security-Policy is ever added, allow `img-src https://tickets.buildinelsalvador.com`

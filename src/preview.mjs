@@ -2,8 +2,9 @@
 //
 //   node src/preview.mjs          then open http://localhost:8788/events
 //
-// Serves the repo root like the live Worker does (/about -> about.html) and answers
-// /api/events by running src/worker.js against the real, public pretix pages.
+// Serves the repo root like the live Worker does (/about -> about.html). Like Cloudflare,
+// any path that matches no file goes to src/worker.js: /api/events (run against the real,
+// public pretix pages) and the per-event share pages, /events/sn260926.
 // Why not `npx wrangler dev`: the site's asset directory is the repo root, so wrangler's
 // file watcher sees its own .wrangler/ scratch files change and reloads forever.
 // `python3 -m http.server` still works too; events.js then falls back to
@@ -37,7 +38,12 @@ globalThis.caches = { default: {
     memory.set(req.url, { res: res.clone(), expires: Date.now() + (age ? Number(age[1]) : 0) * 1000 });
   },
 } };
-const env = { ASSETS: { fetch: async () => new Response('', { status: 404 }) } };
+const env = { ASSETS: { fetch: async (req) => {
+  const found = await file(decodeURIComponent(new URL(req.url).pathname));
+  return found
+    ? new Response(found.body, { headers: { 'Content-Type': TYPES[extname(found.full)] || 'application/octet-stream' } })
+    : new Response('', { status: 404 });
+} } };
 
 async function file(path) {
   const safe = normalize(path).replace(/^(\.\.[/\\])+/, '');
@@ -52,16 +58,16 @@ async function file(path) {
 createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   try {
-    if (url.pathname.startsWith('/api/')) {
+    const found = url.pathname.startsWith('/api/') ? null
+      : await file(decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname));
+    if (!found) {
       const waits = [];
       const r = await worker.fetch(new Request(url, { method: req.method }), env, { waitUntil: (p) => waits.push(p) });
       res.writeHead(r.status, Object.fromEntries(r.headers));
-      res.end(Buffer.from(await r.arrayBuffer()));
+      res.end(req.method === 'HEAD' ? undefined : Buffer.from(await r.arrayBuffer()));
       await Promise.all(waits);
       return;
     }
-    const found = await file(decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname));
-    if (!found) { res.writeHead(404); res.end(); return; }
     res.writeHead(200, { 'Content-Type': TYPES[extname(found.full)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
     res.end(found.body);
   } catch (err) {
