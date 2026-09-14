@@ -1,0 +1,7 @@
+# Short links on buildinelsalvador.com. Cloudflare reads this file as config (not a page).
+# Format: /path  destination  status. Use 302 so a link can be repointed later;
+# browsers cache 301s indefinitely. Paths are case-sensitive.
+
+# BIES Social and Launch Party (Luma)
+/launchparty   https://luma.com/o8nl9dae   302
+/launchparty/  https://luma.com/o8nl9dae   302
