@@ -19,7 +19,7 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const PORT = Number(process.env.PORT) || 8788;
 const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json',
   '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
-  '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml', '.mp4': 'video/mp4', '.webmanifest': 'application/manifest+json' };
+  '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml', '.mp4': 'video/mp4', '.webmanifest': 'application/manifest+json', '.zip': 'application/zip' };
 
 // Stand-in for the Cloudflare Cache API. Like the real one, an entry expires after the
 // s-maxage (else max-age) in its Cache-Control header, so pretix edits show up locally
