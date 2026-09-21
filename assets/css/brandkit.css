@@ -9,8 +9,10 @@
 .bk-item figcaption{margin-top:.9rem;font-weight:600;color:var(--navy);font-size:.95rem}
 .bk-item figcaption span{display:block;margin-top:.3rem;font-weight:400;color:var(--muted);font-size:.85rem;line-height:1.5}
 
-.bk-colors{list-style:none;margin:1rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:.7rem}
+.legal ul.bk-colors{list-style:none;margin:1rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem 1.4rem}
 .bk-colors li{display:flex;align-items:center;gap:.7rem;margin:0;color:var(--navy);font-size:.95rem}
 .bk-sw{width:30px;height:30px;border-radius:7px;flex:none}
 .bk-sw-line{border:1px solid var(--line)}
 .bk-colors code{color:var(--muted);font-size:.85rem}
+
+@media (max-width:520px){.legal ul.bk-colors{grid-template-columns:1fr}}
