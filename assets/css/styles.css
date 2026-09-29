@@ -155,7 +155,8 @@ section{position:relative}
 .member-btn::after{content:"";display:block;width:9px;height:9px;margin:.9rem auto 0;border-right:2px solid var(--orange);border-bottom:2px solid var(--orange);transform:translateY(-2px) rotate(45deg);transition:transform .25s ease}
 .member-btn[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
 .member .avatar{width:112px;height:112px;border-radius:50%;margin:0 auto 1.1rem;display:flex;align-items:center;justify-content:center;background:var(--cobalt);color:#fff;font-family:var(--font-display);font-weight:700;font-size:2.4rem;letter-spacing:.02em}
-.member img.avatar{object-fit:cover;display:block}
+/* Photos are on white, so a hairline ring keeps the circle visible on the white card. */
+.member img.avatar{object-fit:cover;display:block;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
 .member .name{display:block;color:var(--navy);font-size:clamp(1.25rem,1.8vw,1.45rem)}
 .member .role,.bio-role{display:block;margin-top:.45rem;color:var(--muted);font-family:var(--font-body);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;line-height:1.4}
 /* The bio. Its top padding leaves room for the caret, which points at the open card. */
