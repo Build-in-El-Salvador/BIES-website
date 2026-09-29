@@ -155,36 +155,46 @@ section{position:relative}
 .member-btn::after{content:"";display:block;width:9px;height:9px;margin:.9rem auto 0;border-right:2px solid var(--orange);border-bottom:2px solid var(--orange);transform:translateY(-2px) rotate(45deg);transition:transform .25s ease}
 .member-btn[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
 .member .avatar{width:112px;height:112px;border-radius:50%;margin:0 auto 1.1rem;display:flex;align-items:center;justify-content:center;background:var(--cobalt);color:#fff;font-family:var(--font-display);font-weight:700;font-size:2.4rem;letter-spacing:.02em}
-/* Photos are on white, so a hairline ring keeps the circle visible on the white card. */
-.member img.avatar{object-fit:cover;display:block;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
+/* Photos have a transparent background, so the circle's blue shows behind the person. */
+.member img.avatar{object-fit:cover;display:block}
 .member .name{display:block;color:var(--navy);font-size:clamp(1.25rem,1.8vw,1.45rem)}
 .member .role,.bio-role{display:block;margin-top:.45rem;color:var(--muted);font-family:var(--font-body);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;line-height:1.4}
-/* The bio. Its top padding leaves room for the caret, which points at the open card. */
+/* The bio: the photo again, larger, beside the name and the text. Its top padding
+   leaves room for the caret, which points at the open card. */
 .bio{flex:0 0 100%;overflow:hidden;padding-top:12px;scroll-margin:6rem 0 1rem}
-.bio-inner{position:relative;display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:.5rem 2.4rem;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:clamp(1.4rem,3vw,2.1rem) clamp(1.4rem,3vw,2.4rem)}
+.bio-inner{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:clamp(1.4rem,3vw,2.4rem);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:clamp(1.4rem,3vw,2.1rem) clamp(1.4rem,3vw,2.4rem)}
 .bio-inner::before{content:"";position:absolute;top:-8px;left:var(--caret-x,50%);width:16px;height:16px;margin-left:-8px;background:var(--surface);border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.bio-photo{grid-row:1 / span 2;align-self:start;width:180px;height:180px;border-radius:50%;background:var(--cobalt);object-fit:cover}
+.bio-head{align-self:end}
 .bio-name{display:block;font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,2.4vw,2rem);line-height:1.04;color:var(--navy)}
-.bio-text{color:var(--muted);font-size:1.02rem;line-height:1.7;max-width:62ch}
-@media (max-width:1199px){.member{flex-basis:calc((100% - 2 * var(--gap)) / 3)}}
+.bio-text{align-self:start;margin-top:.7rem;color:var(--muted);font-size:1.02rem;line-height:1.7;max-width:62ch}
+@media (max-width:1199px){
+  .member{flex-basis:calc((100% - 2 * var(--gap)) / 3)}
+  .bio-photo{width:150px;height:150px}
+}
 @media (max-width:680px){
   .member{flex-basis:calc((100% - var(--gap)) / 2)}
   .member-btn{padding:1.4rem .7rem 1rem}
   .member .avatar{width:88px;height:88px;font-size:1.9rem}
-  .bio-inner{grid-template-columns:1fr}
+  .bio-photo{width:120px;height:120px}
 }
-/* Phones: one card per row, avatar beside the name. The open bio joins its card,
-   so the card itself looks expanded. */
+/* Phones: one card per row, avatar beside the name. Opening a card turns it into a
+   profile, photo large and centred, and the bio joins it below, so the card itself
+   looks expanded. */
 @media (max-width:480px){
   .member{flex-basis:100%}
   .member-btn{display:grid;grid-template-columns:auto 1fr auto;column-gap:.9rem;align-items:center;text-align:left;padding:1rem}
-  .member .avatar{grid-row:1 / span 2;width:72px;height:72px;font-size:1.6rem;margin:0}
+  .member .avatar{grid-row:1 / span 2;width:72px;height:72px;font-size:1.6rem;margin:0;transition:width .25s ease,height .25s ease}
   .member .name{align-self:end}
   .member .role{align-self:start;margin-top:.2rem}
   .member-btn::after{grid-column:3;grid-row:1 / span 2;margin:0}
-  .member-btn[aria-expanded="true"]{border-color:var(--line) var(--line) var(--surface);border-top-color:var(--orange);border-radius:16px 16px 0 0;box-shadow:none;transform:none}
+  .member-btn[aria-expanded="true"]{display:block;text-align:center;padding-top:1.4rem;border-color:var(--line) var(--line) var(--surface);border-top-color:var(--orange);border-radius:16px 16px 0 0;box-shadow:none;transform:none}
+  .member-btn[aria-expanded="true"] .avatar{width:160px;height:160px;margin:0 auto 1rem}
+  .member-btn[aria-expanded="true"] .role{margin-top:.45rem}
+  .member-btn[aria-expanded="true"]::after{margin:.9rem auto 0}
   .bio{margin-top:calc(-1 * var(--gap));padding-top:0}
   .bio-inner{display:block;border-top:0;border-radius:0 0 16px 16px;padding:.2rem 1rem 1.3rem}
-  .bio-inner::before,.bio-head{display:none}
+  .bio-inner::before,.bio-head,.bio-photo{display:none}
 }
 
 /* ---------- Split (text + media) ---------- */
