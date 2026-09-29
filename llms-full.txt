@@ -11,6 +11,13 @@ Build in El Salvador (BIES) is a network and coordination layer for entrepreneur
 ## Founder's story (Michael Ruiz)
 In 2023, Michael Ruiz moved to El Salvador, drawn to its frontier spirit and the sense that something big was being built there. After an early setback in the local Bitcoin scene, a chance meeting with a group of entrepreneurs who were still building and still optimistic reinvigorated him, and he decided to stay and rebuild. He started hosting informal gatherings, which grew into workshops and roundtables, and then into a comprehensive network and infrastructure. Michael acts as the current organizer, and a long-term goal is for BIES to no longer depend on any single individual.
 
+## Team
+- Michael Ruiz, Founder
+- Luis Esparragoza, Co-Founder
+- Mattias Must, Media Director
+- Emilio Rivas, Events Director
+- Mike Skinner, Technical Director
+
 ## Who BIES is for
 BIES is for mission-driven entrepreneurs. As founder Michael Ruiz puts it, BIES is for entrepreneurs that are mission driven. More fully, BIES is for high-agency builders, creators, entrepreneurs, and problem-solvers. Specifically:
 - People who operate on a low time preference and play long-term games, who understand they are building a legacy and that their reputation matters.
