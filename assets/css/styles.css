@@ -140,26 +140,50 @@ section{position:relative}
 @media (max-width:760px){.value-cards{grid-template-columns:1fr}}
 
 /* ---------- Team (About) ---------- */
-/* Flex, not grid, so a short last row stays centred (3+2, then 2+2+1).
+/* Each card is a button that opens that person's bio (assets/js/team.js). The bio spans
+   the full width under its card's row; team.js slots it there with `order`.
+   Flex, not grid, so a short last row stays centred (3+2, then 2+2+1).
    Breakpoints are set so the longest role, "Technical Director", fits on one line. */
 .team{scroll-margin-top:5rem}
-.team-grid{--gap:clamp(1rem,2vw,1.5rem);display:flex;flex-wrap:wrap;justify-content:center;gap:var(--gap);list-style:none;margin-top:1.8rem}
-.member{flex:0 0 calc((100% - 4 * var(--gap)) / 5);background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--orange);border-radius:16px;padding:1.8rem .75rem 1.6rem;text-align:center}
+.team-grid{--gap:clamp(1rem,2vw,1.5rem);display:flex;flex-wrap:wrap;justify-content:center;gap:var(--gap);margin-top:1.8rem}
+.member{flex:0 0 calc((100% - 4 * var(--gap)) / 5);display:flex}
+.member-btn{flex:1;font:inherit;color:inherit;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--orange);border-radius:16px;padding:1.8rem .75rem 1.2rem;text-align:center;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.member-btn:focus-visible{outline:2px solid var(--accent-2);outline-offset:3px}
+.member-btn[aria-expanded="true"]{border-color:var(--orange);box-shadow:0 14px 30px -20px rgba(18,30,90,.45)}
+@media (hover:hover){.member-btn:hover{transform:translateY(-3px);box-shadow:0 14px 30px -20px rgba(18,30,90,.45)}}
+/* The chevron: points down when closed, up when open. */
+.member-btn::after{content:"";display:block;width:9px;height:9px;margin:.9rem auto 0;border-right:2px solid var(--orange);border-bottom:2px solid var(--orange);transform:translateY(-2px) rotate(45deg);transition:transform .25s ease}
+.member-btn[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
 .member .avatar{width:112px;height:112px;border-radius:50%;margin:0 auto 1.1rem;display:flex;align-items:center;justify-content:center;background:var(--cobalt);color:#fff;font-family:var(--font-display);font-weight:700;font-size:2.4rem;letter-spacing:.02em}
 .member img.avatar{object-fit:cover;display:block}
-.member h3{color:var(--navy);font-size:clamp(1.25rem,1.8vw,1.45rem)}
-.member .role{margin-top:.45rem;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;line-height:1.4}
+.member .name{display:block;color:var(--navy);font-size:clamp(1.25rem,1.8vw,1.45rem)}
+.member .role,.bio-role{display:block;margin-top:.45rem;color:var(--muted);font-family:var(--font-body);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;line-height:1.4}
+/* The bio. Its top padding leaves room for the caret, which points at the open card. */
+.bio{flex:0 0 100%;overflow:hidden;padding-top:12px;scroll-margin:6rem 0 1rem}
+.bio-inner{position:relative;display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:.5rem 2.4rem;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:clamp(1.4rem,3vw,2.1rem) clamp(1.4rem,3vw,2.4rem)}
+.bio-inner::before{content:"";position:absolute;top:-8px;left:var(--caret-x,50%);width:16px;height:16px;margin-left:-8px;background:var(--surface);border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.bio-name{display:block;font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,2.4vw,2rem);line-height:1.04;color:var(--navy)}
+.bio-text{color:var(--muted);font-size:1.02rem;line-height:1.7;max-width:62ch}
 @media (max-width:1199px){.member{flex-basis:calc((100% - 2 * var(--gap)) / 3)}}
 @media (max-width:680px){
-  .member{flex-basis:calc((100% - var(--gap)) / 2);padding:1.4rem .7rem 1.3rem}
+  .member{flex-basis:calc((100% - var(--gap)) / 2)}
+  .member-btn{padding:1.4rem .7rem 1rem}
   .member .avatar{width:88px;height:88px;font-size:1.9rem}
+  .bio-inner{grid-template-columns:1fr}
 }
-/* Phones: one card per row, avatar beside the name. */
+/* Phones: one card per row, avatar beside the name. The open bio joins its card,
+   so the card itself looks expanded. */
 @media (max-width:480px){
-  .member{flex-basis:100%;display:grid;grid-template-columns:auto 1fr;column-gap:1rem;align-items:center;text-align:left;padding:1rem 1.1rem}
+  .member{flex-basis:100%}
+  .member-btn{display:grid;grid-template-columns:auto 1fr auto;column-gap:.9rem;align-items:center;text-align:left;padding:1rem}
   .member .avatar{grid-row:1 / span 2;width:72px;height:72px;font-size:1.6rem;margin:0}
-  .member h3{align-self:end}
+  .member .name{align-self:end}
   .member .role{align-self:start;margin-top:.2rem}
+  .member-btn::after{grid-column:3;grid-row:1 / span 2;margin:0}
+  .member-btn[aria-expanded="true"]{border-color:var(--line) var(--line) var(--surface);border-top-color:var(--orange);border-radius:16px 16px 0 0;box-shadow:none;transform:none}
+  .bio{margin-top:calc(-1 * var(--gap));padding-top:0}
+  .bio-inner{display:block;border-top:0;border-radius:0 0 16px 16px;padding:.2rem 1rem 1.3rem}
+  .bio-inner::before,.bio-head{display:none}
 }
 
 /* ---------- Split (text + media) ---------- */

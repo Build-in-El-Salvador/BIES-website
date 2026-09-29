@@ -47,7 +47,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
 <link rel="stylesheet" href="assets/css/tokens.css?v=4bfaf206">
-<link rel="stylesheet" href="assets/css/styles.css?v=f0c00147">
+<link rel="stylesheet" href="assets/css/styles.css?v=e880d34c">
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@graph": [
@@ -299,15 +299,37 @@
     <span class="eyebrow">The People Behind BIES</span>
     <h2>Meet the Team</h2>
   </div>
-  <!-- To add a photo, replace a member's <span class="avatar"> with
+  <!-- Each person is a card (the <h3>) followed by their bio (the <div class="bio">).
+       A card's aria-controls must match its bio's id; assets/js/team.js does the rest.
+       To add a photo, replace a member's <span class="avatar"> with
        <img class="avatar" src="assets/images/team/first-last.webp" alt="" width="224" height="224" loading="lazy"> -->
-  <ul class="team-grid">
-    <li class="member reveal"><span class="avatar" aria-hidden="true">MR</span><h3>Michael Ruiz</h3><p class="role">Founder</p></li>
-    <li class="member reveal"><span class="avatar" aria-hidden="true">LE</span><h3>Luis Esparragoza</h3><p class="role">Co-Founder</p></li>
-    <li class="member reveal"><span class="avatar" aria-hidden="true">MM</span><h3>Mattias Must</h3><p class="role">Media Director</p></li>
-    <li class="member reveal"><span class="avatar" aria-hidden="true">ER</span><h3>Emilio Rivas</h3><p class="role">Events Director</p></li>
-    <li class="member reveal"><span class="avatar" aria-hidden="true">MS</span><h3>Mike Skinner</h3><p class="role">Technical Director</p></li>
-  </ul>
+  <div class="team-grid">
+    <h3 class="member reveal"><button class="member-btn" type="button" id="tm-ruiz" aria-expanded="false" aria-controls="bio-ruiz"><span class="avatar" aria-hidden="true">MR</span><span class="name">Michael Ruiz</span><span class="role">Founder</span></button></h3>
+    <div class="bio" id="bio-ruiz" role="region" aria-labelledby="tm-ruiz" hidden><div class="bio-inner">
+      <p class="bio-head" aria-hidden="true"><span class="bio-name">Michael Ruiz</span><span class="bio-role">Founder</span></p>
+      <p class="bio-text">Michael started BIES with Luis as a Substack, Building El Salvador, interviewing the people shaping the country's future. When a night at Club Cocal showed what happens when those people share a room, he turned the interviews into roundtables, and the roundtables into a network. Today he leads the BIES vision and its partnerships.</p>
+    </div></div>
+    <h3 class="member reveal"><button class="member-btn" type="button" id="tm-esparragoza" aria-expanded="false" aria-controls="bio-esparragoza"><span class="avatar" aria-hidden="true">LE</span><span class="name">Luis Esparragoza</span><span class="role">Co-Founder</span></button></h3>
+    <div class="bio" id="bio-esparragoza" role="region" aria-labelledby="tm-esparragoza" hidden><div class="bio-inner">
+      <p class="bio-head" aria-hidden="true"><span class="bio-name">Luis Esparragoza</span><span class="bio-role">Co-Founder</span></p>
+      <p class="bio-text">Luis co-founded BIES with Michael. Together they launched Building El Salvador, the Substack whose interviews with entrepreneurs led to the first BIES roundtable. At our events you'll find him on the floor, interviewing builders and keeping the night running smoothly.</p>
+    </div></div>
+    <h3 class="member reveal"><button class="member-btn" type="button" id="tm-must" aria-expanded="false" aria-controls="bio-must"><span class="avatar" aria-hidden="true">MM</span><span class="name">Mattias Must</span><span class="role">Media Director</span></button></h3>
+    <div class="bio" id="bio-must" role="region" aria-labelledby="tm-must" hidden><div class="bio-inner">
+      <p class="bio-head" aria-hidden="true"><span class="bio-name">Mattias Must</span><span class="bio-role">Media Director</span></p>
+      <p class="bio-text">Mattias leads media at BIES: the video, photography, newsletter and social channels that tell our builders' stories. At events he's the one behind the camera, capturing the footage that becomes our reels and after-movies.</p>
+    </div></div>
+    <h3 class="member reveal"><button class="member-btn" type="button" id="tm-rivas" aria-expanded="false" aria-controls="bio-rivas"><span class="avatar" aria-hidden="true">ER</span><span class="name">Emilio Rivas</span><span class="role">Events Director</span></button></h3>
+    <div class="bio" id="bio-rivas" role="region" aria-labelledby="tm-rivas" hidden><div class="bio-inner">
+      <p class="bio-head" aria-hidden="true"><span class="bio-name">Emilio Rivas</span><span class="bio-role">Events Director</span></p>
+      <p class="bio-text">Emilio produces BIES events, from the plan and the budget to venues, vendors and sponsors. On event day he owns the build, so everything is in place before the first guest walks in.</p>
+    </div></div>
+    <h3 class="member reveal"><button class="member-btn" type="button" id="tm-skinner" aria-expanded="false" aria-controls="bio-skinner"><span class="avatar" aria-hidden="true">MS</span><span class="name">Mike Skinner</span><span class="role">Technical Director</span></button></h3>
+    <div class="bio" id="bio-skinner" role="region" aria-labelledby="tm-skinner" hidden><div class="bio-inner">
+      <p class="bio-head" aria-hidden="true"><span class="bio-name">Mike Skinner</span><span class="bio-role">Technical Director</span></p>
+      <p class="bio-text">Mike builds and runs the technology behind BIES: the website, event ticketing, payments and member systems, plus the automations that keep a growing team working in sync.</p>
+    </div></div>
+  </div>
 </section>
 
 <section class="band band-blue">
@@ -530,5 +552,6 @@
     </div>
   </div>
   <script src="assets/js/main.js?v=4bfaf206" defer></script>
+  <script src="assets/js/team.js?v=e2007a36" defer></script>
 </body>
 </html>

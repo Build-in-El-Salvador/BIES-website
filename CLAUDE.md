@@ -53,6 +53,7 @@ assets/
   css/events.css   the Events page only (own ?v=)
   js/main.js       nav toggle + scroll reveal
   js/events.js     the Events page only (own ?v=)
+  js/team.js       About page team cards: click a card to open its bio (own ?v=)
   data/            local preview sample for events.html (not deployed)
   images/          site images; images/gallery/ holds photos + .mp4 video
 src/worker.js      /api/events (not deployed as an asset)
