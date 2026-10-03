@@ -152,7 +152,7 @@ function eventHead(html, ev) {
     html = html.replace(new RegExp(`(<meta ${attr}="${key}" content=")[^"]*(">)`), (m, open, close) => open + escAttr(value) + close);
   };
   html = html.replace(/<title>[^<]*<\/title>/, () => `<title>${escAttr(title)} | ${escAttr(CFG.orgName)}</title>`);
-  html = html.replace(/(<link rel="(?:canonical|alternate)"[^>]*href=")https:\/\/buildinelsalvador\.com\/events\.html(")/g,
+  html = html.replace(/(<link rel="(?:canonical|alternate)"[^>]*href=")https:\/\/buildinelsalvador\.com\/events(")/g,
     (m, open, close) => open + pageUrl + close);
   set('name', 'description', description);
   set('property', 'og:title', title);
