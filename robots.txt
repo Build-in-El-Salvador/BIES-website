@@ -4,6 +4,11 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+# Except the Events page's data: events.js loads its list and Event schema from
+# /api/events in the browser, and Google obeys robots.txt while rendering, so blocking
+# it shows Google an empty Events page. The JSON is sent with X-Robots-Tag: noindex,
+# so it is fetched but never listed as a result. The longer rule wins over /api/.
+Allow: /api/events
 
 # --- Appear in AI answers: retrieval + user-fetch agents (keep these open) ---
 User-agent: OAI-SearchBot
