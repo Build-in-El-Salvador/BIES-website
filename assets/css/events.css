@@ -42,7 +42,7 @@ html.ev-lock,html.ev-lock body{overflow:hidden}
 .ev-card-meta img{flex:0 0 auto;width:18px;height:18px;border-radius:50%}
 .ev-card-tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1rem}
 .ev-card-cover{width:clamp(170px,22vw,250px);aspect-ratio:1200/630;border-radius:10px;overflow:hidden;background:var(--panel)}
-.ev-card-cover img{width:100%;height:100%;object-fit:cover}
+.ev-card-cover img{width:100%;height:100%;object-fit:cover;object-position:center top}
 .ev-day.is-past .ev-card-cover img{filter:grayscale(.55);opacity:.85}
 
 /* ---------- Status chips ---------- */
