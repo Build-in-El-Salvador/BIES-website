@@ -9,6 +9,9 @@
  *   GET /api/events         ->  the JSON that the Events page (events.html) renders.
  *   GET /events/<code>      ->  the Events page with that event's link-preview tags,
  *                               e.g. /events/sn260926 (see eventPage).
+ *   GET /.well-known/nostr.json
+ *                           ->  NIP-05 lookups for name@buildinelsalvador.com, passed
+ *                               through to the BIES app, which issues those names.
  *
  * pretix at tickets.buildinelsalvador.com is the single source of event data:
  * staff publish, edit and sell events there, and nobody edits this repo per
@@ -40,6 +43,8 @@ const ORG_URL = `${CFG.pretix}/${CFG.org}/`;
 const EVENT_URL_RE = new RegExp(`^${escapeRe(ORG_URL)}([A-Za-z0-9][A-Za-z0-9._-]{0,49})/$`);
 const LOCAL_HOST_RE = /^(localhost|127\.0\.0\.1|\[::1\])$/;
 const SITE_URL = 'https://buildinelsalvador.com';
+// NIP-05 names (name@buildinelsalvador.com) are issued and stored by the BIES app.
+const NIP05_UPSTREAM = 'https://app.buildinelsalvador.com/.well-known/nostr.json';
 const EVENT_PAGE_RE = /^\/events\/([A-Za-z0-9][A-Za-z0-9._-]{0,49})\/?$/; // /events/sn260926
 // pretix product "current_unavailability_reason" values for tickets the public can't buy at
 // all: switched off, voucher-only, or hidden while another ticket is available. Left out.
@@ -49,6 +54,7 @@ export default {
   async fetch(request, env, ctx) {
     const { pathname } = new URL(request.url);
     if (pathname === '/api/events') return eventsRoute(request, env, ctx);
+    if (pathname === '/.well-known/nostr.json') return nip05Route(request);
     if (pathname.startsWith('/api/')) return json({ error: 'not_found' }, 404);
     const page = EVENT_PAGE_RE.exec(pathname);
     if (page && (request.method === 'GET' || request.method === 'HEAD')) return eventPage(request, env, ctx, page[1]);
@@ -57,6 +63,34 @@ export default {
     return env.ASSETS.fetch(request);
   },
 };
+
+// Nostr clients verify name@buildinelsalvador.com by fetching this domain's
+// /.well-known/nostr.json?name=<name>. The names live in the BIES app, so the lookup is
+// passed through to it. NIP-05 requires "Access-Control-Allow-Origin: *" and forbids
+// redirects, so the upstream answer is relayed rather than redirected to.
+async function nip05Route(request) {
+  const cors = { 'Access-Control-Allow-Origin': '*' };
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return json({ error: 'method_not_allowed' }, 405, 0, { Allow: 'GET, HEAD', ...cors });
+  }
+  const { search } = new URL(request.url);
+  let body;
+  try {
+    const res = await fetch(NIP05_UPSTREAM + search, {
+      headers: { Accept: 'application/json', 'User-Agent': 'bies-website-nip05/1' },
+      redirect: 'manual',
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    body = await res.text();
+    const data = JSON.parse(body);
+    if (!data || typeof data.names !== 'object') throw new Error('no names object');
+  } catch (err) {
+    console.warn('nip05: upstream failed:', err && err.message ? err.message : String(err));
+    return json({ error: 'unavailable' }, 502, 0, cors);
+  }
+  return json(body, 200, 300, cors);
+}
 
 async function eventsRoute(request, env, ctx) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
