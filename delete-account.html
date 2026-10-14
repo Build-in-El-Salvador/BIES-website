@@ -80,7 +80,7 @@
   <p class="updated">Last updated: <mark class="todo">[DATE OF PUBLICATION]</mark> · <a href="eliminar-cuenta.html" hreflang="es" lang="es">Leer en español</a></p>
 </section>
 <section class="section-tight wrap">
-  <div class="legal reveal">
+  <div class="legal">
 
 <p>This page explains how to delete your account in the <strong>BIES</strong> app by <strong>Build in El Salvador</strong>, and what happens to your data.</p>
 
@@ -92,23 +92,26 @@
 </ol>
 
 <h2 id="by-email">Without the app</h2>
-<p>Email <mark class="todo">[privacy@buildinelsalvador.com]</mark> from the email address on your account, with the subject <strong>"Delete my BIES account"</strong>. If you sign in with a Nostr key instead of email, include your public key (it starts with <code>npub</code>). We confirm within 5 business days and finish within 30 days.</p>
+<p>Email <mark class="todo">[privacy@buildinelsalvador.com]</mark> from the email address on your account, with the subject <strong>"Delete my BIES account"</strong>. If you sign in with a Nostr key instead of email, include your public key (it starts with <code>npub</code>); because public keys are public, we will ask you to prove it's yours before deleting anything. <mark class="todo">[PROCESS: how we check, e.g. a message to sign with your key]</mark> We confirm within 5 business days and finish within 30 days.</p>
 
 <h2 id="deleted">What we delete</h2>
 <ul>
   <li>Your account and email address</li>
-  <li>Your profile, the directory listings you own, and the recommendations you made</li>
+  <li>Your profile, the directory listings you own, and the votes you made</li>
   <li>Your messages, and your posts on our relay</li>
+  <li>Your photos, videos and albums stored on BIES</li>
   <li>The Nostr key we hold for you, if you signed up with email</li>
   <li>Your notification tokens and your block list</li>
 </ul>
 
 <h2 id="kept">What we keep, and for how long</h2>
 <ul>
-  <li><strong>Backups:</strong> copies in our backups are deleted as the backups expire, within 90 days.</li>
+  <li><strong>Backups:</strong> copies in our backups are deleted as the backups expire, within 90 days. <mark class="todo">[BACKUPS: true only once the old copies are pruned]</mark></li>
+  <li><strong>Photos added before <mark class="todo">[DATE]</mark></strong> were stored by Primal and nostr.build; we can't delete them from those services.</li>
+  <li><strong>Our account activity log:</strong> its entries stay, without your IP address or device details.</li>
   <li><strong>Reports others made about you:</strong> 12 months after we closed them, to keep the community safe.</li>
   <li><strong>Ticket orders:</strong> the ticket shop is a separate service; orders are kept as long as tax law requires.</li>
-  <li><strong>A record of your request</strong>, so we can show we carried it out.</li>
+  <li><strong>A record of your request</strong>, with nothing that identifies you, so we can show we carried it out.</li>
 </ul>
 
 <h2 id="nostr">Public Nostr data</h2>

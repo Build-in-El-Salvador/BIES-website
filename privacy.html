@@ -73,14 +73,6 @@
   </nav>
 </header>
 
-<!--
-  PUBLISH CHECKLIST (APP-LAUNCH-PLAN.md): this notice describes BIES app v1.0 as planned.
-  Before it goes live the app must match it: email sign-in codes via Resend; hosted signer
-  (key never leaves the server); "Take your key" and "Delete account" built; reports and
-  blocks stored server-side; device fingerprinting removed; the MyMemory translation
-  fallback removed; member-directory visibility setting; server logs rotated at 90 days.
-  Then resolve every highlighted [TO DO] mark.
--->
 <main>
 <section class="hero wrap reveal" style="text-align:left;padding-bottom:1rem">
   <span class="eyebrow">Legal</span>
@@ -88,7 +80,7 @@
   <p class="updated">Last updated: <mark class="todo">[DATE OF PUBLICATION]</mark> · <a href="privacidad.html" hreflang="es" lang="es">Leer en español</a></p>
 </section>
 <section class="section-tight wrap">
-  <div class="legal reveal">
+  <div class="legal">
 
 <p>This notice explains what personal data Build in El Salvador collects, why, who else handles it, and how you can control it. It covers this website, our ticket shop, our forms and the BIES app. It follows El Salvador's <em>Ley para la Protección de Datos Personales</em> (Decreto Legislativo No. 144).</p>
 
@@ -120,18 +112,28 @@
   <tbody>
     <tr><td>You create an account with your email</td><td>Your email address. We also create a Nostr key for you: a public key, which identifies you, and a private key, which we keep encrypted on our server (see "Your Nostr key" below)</td><td>To sign you in with a one-time code, and to sign what you publish in the app</td><td>Needed to provide the app you signed up for (Art. 5(g)(2))</td></tr>
     <tr><td>You sign in with your own Nostr key</td><td>Your public key only. Your private key stays with you.</td><td>To sign you in</td><td>Needed to provide the app (Art. 5(g)(2))</td></tr>
-    <tr><td>Your email is on our member list</td><td>That your email matches our member list, and your "Verified member" status</td><td>To show your badge and to count your recommendations in the BIES Trust Score</td><td>Needed to provide the app (Art. 5(g)(2))</td></tr>
-    <tr><td>You fill in your profile</td><td>The name, photo, bio, location, skills, links and company you choose to add</td><td>To show you in the member directory, to the people your visibility setting allows</td><td>Needed to provide the app (Art. 5(g)(2)). What you add, and who sees it, is your choice.</td></tr>
-    <tr><td>You list a farm or business</td><td>The business's name, description, location, photos and contact details (phone, WhatsApp, email, website)</td><td>To publish it in the directory</td><td>Needed to provide the app (Art. 5(g)(2)). You confirm you own the business or have the owner's permission.</td></tr>
-    <tr><td>You recommend a business</td><td>Your recommendation and any comment you add</td><td>To show who recommends it and to calculate its BIES Trust Score</td><td>Needed to provide the app (Art. 5(g)(2))</td></tr>
-    <tr><td>You allow notifications</td><td>A device token from Apple or Google</td><td>To send you the notifications you turned on</td><td><strong>Your consent</strong>, given on your phone. You can turn notifications off there at any time.</td></tr>
+    <tr><td>BIES staff verify you as a member</td><td>Your "Verified" badge</td><td>To show other members you're verified</td><td>Needed to provide the app (Art. 5(g)(2))</td></tr>
+    <tr><td>You fill in your profile</td><td>The name, profile and cover photos, headline (title and company), bio, location, skills, experience, links and Lightning address you choose to add</td><td>To show you in the app, as your privacy settings allow (see "Who sees what" below)</td><td>Needed to provide the app (Art. 5(g)(2)). What you add, and who sees most of it, is your choice.</td></tr>
+    <tr><td>You list a farm or business</td><td>The business's name, description, location, photos and contact details (phone, WhatsApp, email, website)</td><td>To publish it in the directory, where anyone can see it, even without an account</td><td>Needed to provide the app (Art. 5(g)(2)). <mark class="todo">[DECIDE: the app invites customers to "Recommend a business" they don't run. Either say here that they may (public business details only, and the business can claim the listing or ask for removal), or add a confirmation to the listing form.]</mark></td></tr>
+    <tr><td>You vouch for a business, or downvote one</td><td>Your vote, and any comment or reason you add</td><td>To show your vote, with your name, to members, and to calculate the business's BIES Trust Score</td><td>Needed to provide the app (Art. 5(g)(2))</td></tr>
+    <tr><td>You post in the Feed, comment or react</td><td>Your posts, comments, likes and reposts</td><td>To show them to members in the app's Feed</td><td>Needed to provide the app (Art. 5(g)(2))</td></tr>
+    <tr><td>You add photos, videos or albums</td><td>The files, and who you chose to show each album to. Before we store a photo we shrink it and remove its location and other hidden details; from a video we remove its location details.</td><td>To show them where you put them. Anyone with a file's exact link can open it.</td><td>Needed to provide the app (Art. 5(g)(2))</td></tr>
+    <tr><td>You open another member's profile</td><td>That you looked at it</td><td>To tell them "&lt;your name&gt; viewed your profile", at most once an hour. Settings &rarr; Privacy &rarr; Browse profiles privately turns this off.</td><td>Needed to provide the app (Art. 5(g)(2))</td></tr>
+    <tr><td>You allow notifications</td><td>A device token from Apple or, in a browser, a push subscription from your browser's push service, and your browser's details</td><td>To send you the notifications you turned on</td><td><strong>Your consent</strong>, given on your phone or in your browser. You can turn notifications off there, or in Settings &rarr; Notifications, at any time.</td></tr>
     <tr><td>You report something or block someone</td><td>Your report, what it is about, and your block list</td><td>To review abuse and keep the community safe</td><td>Needed to provide the app safely, as our <a href="terms.html">Terms of Use</a> describe (Art. 5(g)(2))</td></tr>
-    <tr><td>You use the app</td><td>When you sign in, your IP address and your app version</td><td>To keep your account secure and to fix problems</td><td>Needed to provide and protect the app</td></tr>
+    <tr><td>You use the app</td><td>When you sign in, and when you change your account or what you publish: your IP address and your browser or device details</td><td>To keep your account secure and to fix problems</td><td>Needed to provide and protect the app</td></tr>
   </tbody>
 </table>
 </div>
-<p><strong>What is public.</strong> The BIES app is built on Nostr, an open network. Your public profile, approved directory listings and anything you post publicly are signed with your Nostr key and copied to Nostr servers ("relays"): ours, and public relays run by others (relay.damus.io, relay.primal.net, relay.nostr.band, nos.lol and purplepag.es). Anyone can see them, in any Nostr app. When you delete something, or your account, we delete it from our systems and our relay and ask the other relays to delete it too, but we cannot force them to.</p>
-<p><strong>Your Nostr key.</strong> If you sign up with email, we create your Nostr key and keep its private part encrypted on our server, so you don't have to manage it. This means we could technically act as you on Nostr; we only use it to sign what you do in the app. You can take your key at any time (Settings &rarr; Take your key), and we then delete our copy. If you sign in with your own Nostr key, we never see your private key.</p>
+<p><strong>Who sees what.</strong></p>
+<ul>
+  <li><strong>Anyone, even without an account:</strong> your name, profile photo, cover photo and headline; your bio, unless you make it members-only; farm and business listings with their contact details; albums you set to Everyone.</li>
+  <li><strong>Members of the app:</strong> the rest of your profile, as Settings &rarr; Privacy allows (you can keep your location, links, details and network to yourself); your posts, comments and reactions in the Feed; albums you set to Members.</li>
+  <li><strong>Only you:</strong> whatever you set to "Only me".</li>
+</ul>
+<p><strong>Public Nostr relays.</strong> The BIES app is built on Nostr, an open network. The Feed and profiles are kept on our own relay, which only members can read. Some things also go to public relays run by others (relay.damus.io, relay.primal.net, relay.nostr.band, nos.lol and purplepag.es), where anyone can see them in any Nostr app: farm and business listings added by members who sign in with their own Nostr key, your profile if you choose "Save to public Nostr", and posts you mark Public on the website. When you delete something, or your account, we delete it from our systems and our relay and ask the other relays to delete it too, but we cannot force them to.</p>
+<p><strong>Posts the app makes for you.</strong> When you first choose your BIES name, the app posts "&lt;your name&gt; just joined" in the members' Feed. If BIES holds your key, it also posts in the Feed when you follow someone, unless either of you keeps your network to yourself, and when you add a Lightning address, unless you keep your links to yourself. <mark class="todo">[If follow posts are dropped (Mike's call), remove that part.]</mark></p>
+<p><strong>Your Nostr key.</strong> If you sign up with email, we create your Nostr key and keep its private part encrypted on our server, so you don't have to manage it. This means we could technically act as you on Nostr; we only use it to sign what you do in the app. You can take your key at any time (Settings &rarr; Nostr key &rarr; Take your key), and we then delete our copy. If you sign in with your own Nostr key, we never see your private key.</p>
 <p>We do not ask for sensitive data, such as health, religion or political opinions. <mark class="todo">[CHECK: does the Salvadoran resident ticket record a DUI number? If it does, say so here.]</mark> We do not sell your data, and we do not use it to make automated decisions about you.</p>
 <p><strong>What needs your consent:</strong> marketing emails, publishing your story, notifications in the app, and sending your data to services outside El Salvador (section 5). Everything else is what we need in order to provide what you asked for.</p>
 
@@ -141,9 +143,13 @@
   <li><strong>Our mailing list:</strong> until you unsubscribe, or two years after your last contact with us, whichever comes first.</li>
   <li><strong>Member and partner applications:</strong> for as long as the membership or partnership lasts. If it doesn't go ahead, 12 months after our decision.</li>
   <li><strong>Emails and messages:</strong> two years.</li>
-  <li><strong>Your BIES app account</strong>, with your profile, listings and recommendations: until you delete your account. We delete them within 30 days of your request. Copies in our backups are deleted as the backups expire, within 90 days.</li>
+  <li><strong>Your BIES app account</strong>, with your profile, listings, votes, posts, photos, videos and albums: until you delete your account. We delete them within 30 days of your request. Copies in our backups are deleted as the backups expire, within 90 days. <mark class="todo">[BACKUPS: true only once the old pre-deploy copies are pruned and the nightly prune keeps 90 days at most]</mark></li>
+  <li><strong>Photos added in the app before <mark class="todo">[DATE the app started storing photos itself]</mark></strong> were stored by Primal and nostr.build. We can't delete them from those services.</li>
   <li><strong>The Nostr key we hold for you:</strong> until you take your key or delete your account. Copies in our backups expire within 90 days.</li>
-  <li><strong>Notification tokens:</strong> until you turn notifications off, sign out, or the token stops working.</li>
+  <li><strong>Notification tokens:</strong> until you sign out on that phone or browser, delete your account, or the token stops working.</li>
+  <li><strong>Sign-in codes:</strong> 24 hours. <strong>Ended sign-in sessions:</strong> 30 days.</li>
+  <li><strong>The log of what we signed with the key we hold for you:</strong> 90 days.</li>
+  <li><strong>The app's account activity log</strong> (what was done, and when): while your account exists. Its IP addresses and device details are removed after 90 days.</li>
   <li><strong>Reports:</strong> 12 months after we close them.</li>
   <li><strong>App security logs:</strong> 90 days. <mark class="todo">[CONFIRM: log rotation set to 90 days on the server]</mark></li>
   <li><strong>Website visit counts:</strong> kept in detail by Cloudflare for 7 days, then only as totals. They never identify anyone.</li>
@@ -157,8 +163,9 @@
   <tbody>
     <tr><td>Cloudflare, Inc.</td><td>Hosts this website, protects it from attacks, and counts visits without cookies</td><td>United States and European Economic Area</td><td>101 Townsend St, San Francisco, CA 94107, USA · privacyquestions@cloudflare.com · +1 650 319 8930</td></tr>
     <tr><td>Google LLC</td><td>Website fonts (your browser sends your IP address to Google when a page loads; Google sets no cookies for this); our email, file storage and contact list (Google Sheets)</td><td>United States</td><td>1600 Amphitheatre Parkway, Mountain View, CA 94043, USA · <a href="https://support.google.com/cloud/contact/dpo" target="_blank" rel="noopener">Google's data protection contact form</a></td></tr>
+    <tr><td><mark class="todo">[HOSTING PROVIDER: confirm the company, e.g. Limestone Networks]</mark></td><td>Runs the server that holds the BIES app, our Nostr relay and our ticket shop</td><td>United States</td><td><mark class="todo">[CONTACT]</mark></td></tr>
     <tr><td>Apple Inc.</td><td>Delivers BIES app notifications on iPhone (Apple Push Notification service)</td><td>United States</td><td>One Apple Park Way, Cupertino, CA 95014, USA · <a href="https://www.apple.com/legal/privacy/contact/" target="_blank" rel="noopener">Apple's privacy contact form</a></td></tr>
-    <tr><td>Resend (Plus Five Five, Inc.)</td><td>Sends ticket emails and BIES app sign-in codes</td><td>United States</td><td>2261 Market Street #5039, San Francisco, CA 94114, USA · privacy@resend.com</td></tr>
+    <tr><td>Resend (Plus Five Five, Inc.)</td><td>Sends ticket emails, BIES app sign-in codes and account notices, and tells our moderators about reports (with the reporter's name and what was reported)</td><td>United States</td><td>2261 Market Street #5039, San Francisco, CA 94114, USA · privacy@resend.com</td></tr>
     <tr><td>BTCPay Lite</td><td>Creates the invoice when you pay in bitcoin. It receives your order number and the amount, and your email only if you are refunded. We never see or hold your wallet keys. Bitcoin payments are public on the blockchain, as they are for any bitcoin payment.</td><td>Estonia</td><td>help@btcpaylite.com</td></tr>
     <tr><td>Tally BV</td><td>Our membership, partner and story forms</td><td>Belgium (EU)</td><td>Sint-Pietersnieuwstraat 11, 9000 Gent, Belgium · hello@tally.so</td></tr>
     <tr><td>Luma Labs, Inc.</td><td>Event pages and RSVPs for some of our events</td><td>United States</td><td>548 Market St PMB 36143, San Francisco, CA 94104, USA · support@luma.com</td></tr>
@@ -167,7 +174,7 @@
   </tbody>
 </table>
 </div>
-<p>The BIES app is available through Apple's App Store and Google Play, which handle your store account under their own privacy policies. Translation in the app runs on our own server. <!-- Add Google (Firebase Cloud Messaging) above once Android notifications are switched on. --></p>
+<p>The BIES app is available through Apple's App Store and Google Play, which handle your store account under their own privacy policies. Translation in the app runs on our own server. If you allow notifications in a web browser, they reach you through your browser maker's push service (Google, Mozilla, Microsoft or Apple). When a Feed post contains a YouTube link, the app loads YouTube's player from youtube-nocookie.com, so Google receives your IP address.</p>
 <p>You may also join us on platforms that have their own privacy policies, such as Skool, Substack, WhatsApp, YouTube and X. Their policies cover what you give them. Anything they share with us, such as your name and email when you join, we handle as this notice describes.</p>
 
 <h2 id="transfers">5. Data sent outside El Salvador</h2>
@@ -182,7 +189,7 @@
   <li><code>pretix_language</code> remembers the language you chose. It lasts up to 10 years.</li>
 </ul>
 <p>You can delete them in your browser at any time. The shop will simply forget your basket and language.</p>
-<p><strong>The BIES app</strong> sets no cookies. It keeps you signed in by storing a session token on your device (in your phone's secure storage, or in your browser on app.buildinelsalvador.com), and remembers settings such as your language. It uses no advertising or tracking.</p>
+<p><strong>The BIES app</strong> uses no advertising or tracking. On the web (app.buildinelsalvador.com) it sets one cookie, <code>__Host-bies_rt</code>, which keeps you signed in: it lasts up to 30 days after you last use the app, and 90 days at most. The phone apps set no cookies. The app also keeps a session token and settings, such as your language, on your device.</p>
 
 <h2 id="rights">7. Your rights</h2>
 <p>You can ask us to:</p>
@@ -195,7 +202,7 @@
   <li><strong>limit</strong> how we use it while a question is resolved (limitation)</li>
 </ul>
 <p>Email <mark class="todo">[privacy@buildinelsalvador.com]</mark> with your name, what you are asking for, and how to reach you. We also accept the Agency's official forms (<a href="https://ace.gob.sv/page/formularios" target="_blank" rel="noopener">ace.gob.sv/page/formularios</a>). We answer within 20 business days. If we need longer for a good reason, we will tell you, and we can take at most 20 more. If something is missing from your request, we will ask you once.</p>
-<p><strong>In the BIES app</strong> you can edit your profile at any time, take your Nostr key (Settings &rarr; Take your key), and delete your account (Settings &rarr; Delete account). You can also ask us to delete it without the app: see <a href="delete-account.html">Delete your BIES account</a>.</p>
+<p><strong>In the BIES app</strong> you can edit your profile at any time, take your Nostr key (Settings &rarr; Nostr key &rarr; Take your key), and delete your account (Settings &rarr; Delete account). You can also ask us to delete it without the app: see <a href="delete-account.html">Delete your BIES account</a>.</p>
 <p><strong>To withdraw consent</strong>, use the unsubscribe link in any of our emails, or email us. It is free, it takes effect within 5 business days, and it does not undo what was done before.</p>
 <p>If you are unhappy with how we handled your data, you can complain to the <em>Agencia de Ciberseguridad del Estado</em> (<a href="https://ace.gob.sv" target="_blank" rel="noopener">ace.gob.sv</a>).</p>
 
