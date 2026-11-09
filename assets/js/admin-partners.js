@@ -1,5 +1,5 @@
 // Website admin, Partners (/admin/partners/): the Partners and Collaborators logos on the
-// About page. The server side is src/partners.js. Edits stay on this page until "Save changes".
+// About and Ecosystem (membership.html) pages. The server side is src/partners.js. Edits stay on this page until "Save changes".
 (() => {
   const A = window.BIESAdmin;
   const $ = (sel) => document.querySelector(sel);
@@ -33,7 +33,7 @@
     if (r.ok) {
       partners = r.body.partners.map((p) => ({ ...p }));
       render();
-      return { ok: true, message: 'Saved. The About page shows the new list within a minute.' };
+      return { ok: true, message: 'Saved. The About and Ecosystem pages show the new list within a minute.' };
     }
     if (r.status === 401) { app.showSignin('Your session ended. Sign in again, and your changes will still be here.'); return { ok: false }; }
     return { ok: false, message: r.body.detail ? `Not saved: ${r.body.detail}.` : 'Not saved. Check your connection and try again.' };
@@ -199,7 +199,7 @@
     const fresh = ui.rows.querySelector(`[data-id="${CSS.escape(p.id)}"]`);
     if (fresh) {
       status(fresh, p, prepared.solidBackground
-        ? { text: 'This logo has a solid background, which shows as a box on the About page. A PNG or SVG with a transparent background looks better.', warn: true }
+        ? { text: 'This logo has a solid background, which shows as a box on the website. A PNG or SVG with a transparent background looks better.', warn: true }
         : { text: 'Logo ready. Press Save changes to publish it.' });
       fresh.querySelector('.adm-upload input').focus();
     }

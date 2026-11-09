@@ -118,8 +118,8 @@ deploy: **Photos** (`/admin/`), **Testimonials** (`/admin/testimonials/`) and **
   Keep the markers when editing pages. **Once testimonials have been saved on the admin
   page, edit them there, not in the HTML:** the saved copy replaces the marked spots. The
   starting list is `src/testimonials-seed.json`, made from the HTML on 2026-11-09.
-- **Partners:** `assets/js/partners.js` redraws the About strip from `/api/partners` (cached a
-  minute). A partner only shows with a logo and "Show on website" ticked.
+- **Partners:** `assets/js/partners.js` redraws the strip on About and Ecosystem
+  (`membership.html`) from `/api/partners` (cached a minute). A partner only shows with a logo and "Show on website" ticked.
 - **Sign-in:** one shared password, the Worker secret `ADMIN_PASSWORD` (kept in the BIES
   Bitwarden). Sessions last 12 hours and are signed with the secret `ADMIN_SESSION_KEY`;
   changing that key signs everyone out. Eight wrong passwords from one IP block sign-in for

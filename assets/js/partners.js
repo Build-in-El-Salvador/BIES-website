@@ -1,6 +1,7 @@
-// About page: draw "Partners and Collaborators" from /api/partners, the list BIES admins
-// edit on /admin/ (see src/partners.js). The logos written into about.html stay as they are
-// if the list can't be loaded, so the strip is never empty.
+// About and Ecosystem (membership.html) pages: draw "Partners and Collaborators" from
+// /api/partners, the list BIES admins edit on /admin/partners/ (see src/partners.js). The
+// logos written into the HTML stay as they are if the list can't be loaded, so the strip is
+// never empty. Both pages carry the same logos in their HTML; keep them alike.
 (() => {
   const strip = document.querySelector('.logo-strip[data-partners]');
   if (!strip || !window.fetch) return;

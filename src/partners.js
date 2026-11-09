@@ -1,7 +1,8 @@
 /**
- * Partners and Collaborators: the logo strip on the About page, edited on /admin/partners/.
+ * Partners and Collaborators: the logo strip on the About and Ecosystem (membership.html)
+ * pages, edited on /admin/partners/.
  *
- *   GET  /api/partners              public list the About page draws (only partners that
+ *   GET  /api/partners              public list those pages draw (only partners that
  *                                   are switched on and have a logo), cached for a minute
  *   GET  /partner-logos/<id>.<ext>  a logo uploaded on the admin page
  *   GET  /api/admin/partners        the full list, hidden partners included   (signed in)
@@ -10,7 +11,7 @@
  *
  * KV (binding SITE): the list under "partners:list", each uploaded logo under "logo:<id>".
  * Until an admin saves for the first time, the list is src/partners-seed.json, which is
- * what about.html shows as static HTML.
+ * what about.html and membership.html show as static HTML.
  */
 import SEED from './partners-seed.json' with { type: 'json' };
 import { PUBLIC_HOSTS, json, readJson, isWebUrl, storeUpload, keepUploads, serveUpload } from './admin-lib.js';
