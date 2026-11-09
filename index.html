@@ -46,8 +46,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
-<link rel="stylesheet" href="assets/css/tokens.css?v=4bfaf206">
-<link rel="stylesheet" href="assets/css/styles.css?v=ad529790">
+<link rel="stylesheet" href="assets/css/tokens.css?v=9b615b0d">
+<link rel="stylesheet" href="assets/css/styles.css?v=81e72397">
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@graph": [
@@ -264,18 +264,18 @@
   <div class="cta-row">
     <a class="btn btn-orange" href="#join">Join Our Ecosystem</a>
   </div>
-  <div class="photo-strip cols-4">
+  <div class="photo-strip cols-4" data-photos="home-strip">
     <img src="assets/images/hero/strip-flag.webp" alt="The flag of El Salvador" fetchpriority="high">
     <img src="assets/images/hero/strip-dinner.webp" alt="BIES members sharing dinner around a table">
     <img src="assets/images/hero/strip-volcano.webp" alt="Volcanic landscape in El Salvador" style="object-position:10% 50%">
-    <img src="assets/images/hero/strip-evening.webp" alt="BIES members networking at an evening event" style="object-position:80% 50%">
+    <img src="assets/images/hero/strip-trio.webp" alt="Three BIES members smiling together at an evening event">
   </div>
 </section>
 
 <section class="band band-blue">
   <div class="wrap">
   <div class="split media-left reveal">
-    <img src="assets/images/gallery/meet-people.webp" alt="Two builders in conversation" loading="lazy">
+    <img data-photos="home-meet" src="assets/images/gallery/meet-handshake.webp" alt="Two BIES members shaking hands at an evening event" loading="lazy">
     <div class="copy">
       <h2>Meet the Right People To Build With From Day One</h2>
       <p>Our ecosystem is designed to help accelerate your progress the moment you step into El Salvador.</p>
@@ -285,17 +285,7 @@
   </div>
 </section>
 
-<section class="section wrap">
-  <figure class="feature-quote reveal">
-    <img class="fq-avatar" src="assets/images/testimonials/charlie.webp" alt="Charlie Stevens" loading="lazy">
-    <div>
-      <blockquote class="fq-quote">&ldquo;Build In El Salvador has been a lifeline, and I'm probably speaking not just for myself, but for a lot of other entrepreneurs here. There's a collaborative environment where you bring ideas together and compound them to create value for other people.&rdquo;</blockquote>
-      <div class="fq-who">Charlie Stevens<span>Founder, Schelling Point</span><span class="fq-loc"><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" style="vertical-align:-1px;margin-right:4px;fill:var(--orange)"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Ireland</span></div>
-    </div>
-  </figure>
-</section>
-
-<section class="section wrap has-decor" style="padding-top:clamp(.5rem,1.5vw,1rem)">
+<section class="section wrap has-decor">
   <img class="decor conn conn-b" src="assets/images/icons/connector-2.webp" alt="" aria-hidden="true" style="top:3%;right:1%;width:clamp(120px,13vw,190px)">
   <img class="decor conn conn-c" src="assets/images/icons/connector-3.webp" alt="" aria-hidden="true" style="bottom:5%;left:1%;width:clamp(90px,10vw,150px)">
   <div class="center" style="max-width:72ch;margin:0 auto clamp(3.5rem,6vw,5rem)">
@@ -304,7 +294,7 @@
     <p class="lead">Here's how we support our builders:</p>
   </div>
   <div class="feature reveal">
-    <img src="assets/images/gallery/evening-stage.webp" alt="A speaker on stage at a BIES evening event, with the crowd looking on" loading="lazy">
+    <img data-photos="home-events" src="assets/images/gallery/events-dinner.webp" alt="A full room of BIES members applauding at a dinner event" loading="lazy">
     <div class="copy">
       <h3>Events</h3>
       <p>BIES hosts workshops, roundtables, retreats, and gatherings designed to help members grow and create connections.<br>Through curated experiences and meaningful conversations, our events create an environment for collaboration, knowledge sharing, and the formation of high-trust relationships. We also bring in outside organizations, investors, and curious minds interested in the opportunities emerging within our ecosystem.</p>
@@ -312,14 +302,14 @@
     </div>
   </div>
   <div class="feature flip reveal">
-    <img src="assets/images/gallery/media-camera.webp" alt="A BIES videographer in a Build in El Salvador cap filming with a camera" loading="lazy">
+    <img data-photos="home-media" src="assets/images/gallery/media-camera.webp" alt="A BIES videographer in a Build in El Salvador cap filming with a camera" loading="lazy">
     <div class="copy">
       <h3>Media</h3>
       <p>Through our newsletter, social media channels, and event coverage, we highlight the people, projects, and ideas emerging from our ecosystem. Our media efforts help members increase their visibility, reach new audiences, build credibility, and showcase what's being built on the ground in El Salvador.</p>
     </div>
   </div>
   <div class="feature reveal">
-    <img src="assets/images/gallery/digital-community.webp" alt="A laptop with a BIES mug" loading="lazy">
+    <img data-photos="home-digital" src="assets/images/gallery/digital-community.webp" alt="A laptop with a BIES mug" loading="lazy">
     <div class="copy">
       <h3>Digital Community</h3>
       <p>Our digital community keeps members connected between events through group chats, online discussions, and virtual calls. It's a space to ask questions, exchange ideas, share resources, make introductions, and tap into the collective intelligence of the ecosystem.</p>
@@ -328,26 +318,39 @@
 </section>
 
 
-<section class="band band-orange testimonials">
+<section class="band band-orange testimonials members">
   <div class="wrap center">
     <span class="eyebrow on-blue">Why BIES?</span>
     <h2>What Members Are Saying:</h2>
+<!-- testimonials:home -->
+    <figure class="feature-quote member-spot reveal" id="member-spot" data-member="nelson-inno" aria-live="polite">
+      <img class="fq-avatar" src="assets/images/testimonials/nelson.webp" alt="Nelson Inno" loading="lazy">
+      <div>
+        <blockquote class="fq-quote" data-short="&ldquo;The signal here is high, so builders and founders are clearly gravitating toward it.&rdquo;">&ldquo;Almost overnight, the BIES community has become one of my main sources for news, innovation, startups, and ideas in El Salvador. The signal here is high, so builders and founders are clearly gravitating toward it. And it is only natural that the group keeps growing, as its value keeps compounding with every new member.&rdquo;</blockquote>
+        <div class="fq-who"><b class="m-name">Nelson Inno</b><span class="m-role">Founder, <a href="https://wespark.io" target="_blank" rel="noopener">WeSpark</a> &amp; <a href="https://everybodyknowsyou.com" target="_blank" rel="noopener">EverybodyKnowsYou</a></span><span class="fq-loc"><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" style="vertical-align:-1px;margin-right:4px;fill:var(--orange)"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>El Salvador</span></div>
+      </div>
+    </figure>
     <div class="grid3">
-        <figure class="tcard reveal">
+        <figure class="tcard member-card reveal" data-member="jimmy-dicarlo">
           <img class="avatar" src="assets/images/testimonials/jimmy.webp" alt="Jimmy DiCarlo" loading="lazy" width="140" height="140">
-          <blockquote><p>&ldquo;It's rare to find a group where everyone is actually doing the thing.&rdquo;</p></blockquote>
-          <figcaption class="who"><b>Jimmy DiCarlo</b><span>Founder, <a href="https://www.instagram.com/escapetoselva/" target="_blank" rel="noopener">SELVA Villas &amp; Retreat Center</a></span><span class="loc"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true" style="vertical-align:-1px;margin-right:3px;fill:currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>United States</span></figcaption>
+          <blockquote data-long="&ldquo;Build in El Salvador has been a real accelerant for me. I've never been around this many high-agency, action-oriented builders in one place. The roundtables sharpen my thinking, the connections have helped move my projects forward, and the energy in the room constantly raises the bar. As I like to say, it's rare to find a group where everyone is actually doing the thing.&rdquo;"><p>&ldquo;It's rare to find a group where everyone is actually doing the thing.&rdquo;</p></blockquote>
+          <figcaption class="who"><b class="m-name">Jimmy DiCarlo</b><span class="m-role">Founder, <a href="https://www.instagram.com/escapetoselva/" target="_blank" rel="noopener">SELVA Villas &amp; Retreat Center</a></span><span class="loc"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true" style="vertical-align:-1px;margin-right:3px;fill:currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>United States</span></figcaption>
+          <button type="button" class="member-more" aria-controls="member-spot" aria-label="Read Jimmy DiCarlo’s full quote" hidden>Read full quote</button>
         </figure>
-        <figure class="tcard reveal">
+        <figure class="tcard member-card reveal" data-member="bianca">
           <img class="avatar" src="assets/images/testimonials/bianca.webp" alt="Bianca" loading="lazy" width="140" height="140">
-          <blockquote><p>&ldquo;BIES has been an unparalleled source of wisdom and guidance for us.&rdquo;</p></blockquote>
-          <figcaption class="who"><b>Bianca</b><span class="loc"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true" style="vertical-align:-1px;margin-right:3px;fill:currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Turkey</span></figcaption>
+          <blockquote data-long="&ldquo;It is through community that humans have not only survived but also thrived, and BIES is a prime example of how this carries forward into the modern age. Whether it is inputs on navigating laws, accounting, real estate development, regulations, taxes, insider information on upcoming changes we should be aware of, or anything else an entrepreneur needs to build in El Salvador (such as where to get a sizzling steak to reward your brain after a long day), this group has been an unparalleled source of wisdom and guidance for us, and a great way for us to pay it forward by sharing all that we have learnt along the way.&rdquo;"><p>&ldquo;BIES has been an unparalleled source of wisdom and guidance for us.&rdquo;</p></blockquote>
+          <figcaption class="who"><b class="m-name">Bianca</b><span class="m-role" hidden></span><span class="loc"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true" style="vertical-align:-1px;margin-right:3px;fill:currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Turkey</span></figcaption>
+          <button type="button" class="member-more" aria-controls="member-spot" aria-label="Read Bianca’s full quote" hidden>Read full quote</button>
         </figure>
-        <figure class="tcard reveal">
-          <img class="avatar" src="assets/images/testimonials/nelson.webp" alt="Nelson Inno" loading="lazy" width="140" height="140">
-          <blockquote><p>&ldquo;The signal here is high, so builders and founders are clearly gravitating toward it.&rdquo;</p></blockquote>
-          <figcaption class="who"><b>Nelson Inno</b><span>Founder, <a href="https://wespark.io" target="_blank" rel="noopener">WeSpark</a> &amp; <a href="https://everybodyknowsyou.com" target="_blank" rel="noopener">EverybodyKnowsYou</a></span><span class="loc"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true" style="vertical-align:-1px;margin-right:3px;fill:currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>El Salvador</span></figcaption>
-        </figure></div>
+        <figure class="tcard member-card reveal" data-member="charlie-stevens">
+          <img class="avatar" src="assets/images/testimonials/charlie.webp" alt="Charlie Stevens" loading="lazy" width="140" height="140">
+          <blockquote data-long="&ldquo;Build In El Salvador has been a lifeline, and I'm probably speaking not just for myself, but for a lot of other entrepreneurs here. The events that are held repeatedly, the well-curated content, the network effect from the group chats, and the quality of the entrepreneurs you end up merging with mean that you get to focus more on being an entrepreneur. It's like a filter for all of that bloat of information that exists online. If it's going through Build In El Salvador, you know it's good. There's not a dog-eat-dog environment. There's a collaborative environment where you bring ideas together and compound them to create value for other people.&rdquo;"><p>&ldquo;If it's going through Build In El Salvador, you know it's good.&rdquo;</p></blockquote>
+          <figcaption class="who"><b class="m-name">Charlie Stevens</b><span class="m-role">Founder, <a href="https://schellingpoint.xyz" target="_blank" rel="noopener">Schelling Point</a></span><span class="loc"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true" style="vertical-align:-1px;margin-right:3px;fill:currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Ireland</span></figcaption>
+          <button type="button" class="member-more" aria-controls="member-spot" aria-label="Read Charlie Stevens’s full quote" hidden>Read full quote</button>
+        </figure>
+    </div>
+<!-- /testimonials:home -->
   </div>
 </section>
 
@@ -361,13 +364,13 @@
       <p>What began as an informal gathering of entrepreneurs and friends became a thriving network of builders, investors, vendors, peers, and government officials coordinating on projects and contributing to the growth and revitalization of El Salvador.</p>
       <a class="btn btn-blue" href="membership.html" style="margin-top:1.2rem">Inside our ecosystem</a>
     </div>
-    <img src="assets/images/gallery/talk.webp" alt="A speaker giving a talk to BIES members" loading="lazy">
+    <img data-photos="home-about" src="assets/images/gallery/talk.webp" alt="A speaker giving a talk to BIES members" loading="lazy">
   </div>
 </section>
 
 
 <section class="signal" id="join">
-  <img class="bg" src="assets/images/hero/cta-bg.webp" alt="Volcano at sunset in El Salvador" loading="lazy">
+  <img data-photos="cta" class="bg" src="assets/images/hero/cta-bg.webp" alt="Volcano at sunset in El Salvador" loading="lazy">
   <div class="inner wrap">
     <span class="eyebrow on-navy">Tap Into the Signal</span>
     <h2>Join Our Ecosystem</h2>
@@ -500,5 +503,6 @@
     </div>
   </div>
   <script src="assets/js/main.js?v=4bfaf206" defer></script>
+  <script src="assets/js/members.js?v=ac543051" defer></script>
 </body>
 </html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Partners | Website admin | Build in El Salvador</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=9b615b0d">
+<link rel="stylesheet" href="/assets/css/styles.css?v=81e72397">
+<link rel="stylesheet" href="/assets/css/admin.css?v=8834bd06">
+</head>
+<body class="adm-body">
+<header class="adm-top">
+  <a class="adm-brand" href="/"><img src="/assets/images/logos/logo-lockup.webp" alt="Build in El Salvador"></a>
+  <nav class="adm-nav" aria-label="Admin tools">
+    <a href="/admin/">Photos</a>
+    <a href="/admin/testimonials/">Testimonials</a>
+    <a href="/admin/partners/" aria-current="page">Partners</a>
+  </nav>
+  <button type="button" class="adm-link" id="signout" hidden>Sign out</button>
+</header>
+
+<main class="adm">
+  <p id="loading" class="adm-note">Loading…</p>
+
+  <section id="setup" class="adm-card" hidden>
+    <h1>The admin page isn't switched on yet</h1>
+    <p>It needs its storage and an admin password set up in Cloudflare. The steps are in the website repository's CLAUDE.md, under "Website admin".</p>
+  </section>
+
+  <form id="signin" class="adm-card adm-signin" hidden novalidate>
+    <h1>Sign in</h1>
+    <label class="adm-field">Admin password
+      <input type="password" id="password" autocomplete="current-password" required>
+    </label>
+    <button type="submit" class="btn btn-orange">Sign in</button>
+    <p class="adm-error" id="signin-error" role="alert"></p>
+    <p class="adm-note">The password is in the BIES Bitwarden.</p>
+  </form>
+
+  <section id="editor" hidden>
+    <div class="adm-intro">
+      <h1>Partners and Collaborators</h1>
+      <p>These logos appear on the About page, in this order. A partner shows once it has a logo and "Show on website" is ticked. Changes go live when you press Save.</p>
+    </div>
+    <ol class="adm-rows" id="rows"></ol>
+    <button type="button" class="btn btn-blue" id="add">Add partner</button>
+
+    <section class="adm-preview" aria-labelledby="preview-h">
+      <h2 id="preview-h">How it looks on the About page</h2>
+      <div class="band-gray adm-preview-band"><div class="logo-strip" id="preview"></div></div>
+      <p class="adm-note" id="preview-empty" hidden>No partner is showing yet.</p>
+    </section>
+
+    <div class="adm-savebar">
+      <p id="save-status" role="status">All changes saved.</p>
+      <button type="button" class="btn btn-orange" id="save" disabled>Save changes</button>
+    </div>
+  </section>
+</main>
+
+<template id="row-template">
+  <li class="adm-row">
+    <div class="adm-logo">
+      <div class="adm-logo-box"><img alt="" hidden><span class="adm-nologo">No logo yet</span></div>
+      <label class="adm-upload">
+        <span class="adm-upload-label">Upload logo</span>
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+      </label>
+    </div>
+    <div class="adm-fields">
+      <label class="adm-field">Name
+        <input type="text" class="f-name" maxlength="80" required>
+      </label>
+      <label class="adm-field">Website or Instagram link
+        <input type="url" class="f-url" maxlength="300" placeholder="https://" inputmode="url">
+      </label>
+      <label class="adm-field adm-size">Logo size <output class="f-size-out"></output>
+        <input type="range" class="f-size" min="40" max="160" step="1">
+      </label>
+      <label class="adm-check"><input type="checkbox" class="f-visible"> Show on website</label>
+      <p class="adm-row-msg"></p>
+    </div>
+    <div class="adm-actions">
+      <button type="button" class="adm-icon f-up">Move up</button>
+      <button type="button" class="adm-icon f-down">Move down</button>
+      <button type="button" class="adm-icon adm-danger f-remove">Remove</button>
+      <span class="adm-confirm" hidden>
+        <span>Remove this partner?</span>
+        <button type="button" class="adm-icon adm-danger f-yes">Remove</button>
+        <button type="button" class="adm-icon f-no">Keep</button>
+      </span>
+    </div>
+  </li>
+</template>
+
+<script src="/assets/js/admin-common.js?v=a9bac426" defer></script>
+<script src="/assets/js/admin-partners.js?v=ce1584d0" defer></script>
+</body>
+</html>

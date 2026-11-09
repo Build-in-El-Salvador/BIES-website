@@ -9,6 +9,9 @@ Disallow: /api/
 # it shows Google an empty Events page. The JSON is sent with X-Robots-Tag: noindex,
 # so it is fetched but never listed as a result. The longer rule wins over /api/.
 Allow: /api/events
+# The About page draws its partner logos from /api/partners the same way.
+Allow: /api/partners
+Disallow: /admin/
 
 # --- Appear in AI answers: retrieval + user-fetch agents (keep these open) ---
 User-agent: OAI-SearchBot

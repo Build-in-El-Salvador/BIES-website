@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Photos | Website admin | Build in El Salvador</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=9b615b0d">
+<link rel="stylesheet" href="/assets/css/styles.css?v=81e72397">
+<link rel="stylesheet" href="/assets/css/admin.css?v=8834bd06">
+</head>
+<body class="adm-body">
+<header class="adm-top">
+  <a class="adm-brand" href="/"><img src="/assets/images/logos/logo-lockup.webp" alt="Build in El Salvador"></a>
+  <nav class="adm-nav" aria-label="Admin tools">
+    <a href="/admin/" aria-current="page">Photos</a>
+    <a href="/admin/testimonials/">Testimonials</a>
+    <a href="/admin/partners/">Partners</a>
+  </nav>
+  <button type="button" class="adm-link" id="signout" hidden>Sign out</button>
+</header>
+
+<main class="adm adm-wide">
+  <p id="loading" class="adm-note">Loading…</p>
+
+  <section id="setup" class="adm-card" hidden>
+    <h1>The admin page isn't switched on yet</h1>
+    <p>It needs its storage and an admin password set up in Cloudflare. The steps are in the website repository's CLAUDE.md, under "Website admin".</p>
+  </section>
+
+  <form id="signin" class="adm-card adm-signin" hidden novalidate>
+    <h1>Sign in</h1>
+    <label class="adm-field">Admin password
+      <input type="password" id="password" autocomplete="current-password" required>
+    </label>
+    <button type="submit" class="btn btn-orange">Sign in</button>
+    <p class="adm-error" id="signin-error" role="alert"></p>
+    <p class="adm-note">The password is in the BIES Bitwarden.</p>
+  </form>
+
+  <section id="editor" hidden>
+    <div class="adm-intro">
+      <h1>Photos</h1>
+      <p>Every photo you can change on the website, grouped by page and in page order. Use Edit to replace a photo, crop it, or write its description. Changes go live when you press Save.</p>
+    </div>
+    <div id="groups" class="adm-groups"></div>
+    <div class="adm-savebar">
+      <p id="save-status" role="status">All changes saved.</p>
+      <button type="button" class="btn btn-orange" id="save" disabled>Save changes</button>
+    </div>
+  </section>
+</main>
+
+<dialog id="photo-dialog" class="adm-dialog" aria-labelledby="dlg-title">
+  <form id="dlg-form" novalidate>
+    <div class="adm-dlg-head">
+      <h2 id="dlg-title">Edit photo</h2>
+      <p class="adm-note" id="dlg-where"></p>
+    </div>
+    <div class="adm-dlg-body">
+      <div class="adm-dlg-main">
+        <p class="adm-note" id="dlg-help"></p>
+        <div class="adm-crop is-loading" id="dlg-crop">
+          <div class="adm-crop-clip">
+            <img id="dlg-img" alt="" draggable="false">
+            <div class="adm-crop-box" id="dlg-box" tabindex="0" role="group" aria-label="The part the website shows. Arrow keys move it, plus and minus zoom in and out."><span class="adm-crop-tag" id="dlg-box-tag">On the website</span></div>
+            <div class="adm-crop-phone" id="dlg-phone" tabindex="0" role="group" aria-label="The part phones show. Arrow keys move it." hidden><span class="adm-crop-tag">On a phone</span></div>
+          </div>
+          <span class="adm-crop-corner" data-corner="nw" aria-hidden="true"></span>
+          <span class="adm-crop-corner" data-corner="ne" aria-hidden="true"></span>
+          <span class="adm-crop-corner" data-corner="sw" aria-hidden="true"></span>
+          <span class="adm-crop-corner" data-corner="se" aria-hidden="true"></span>
+        </div>
+        <p class="adm-row-msg" id="dlg-size"></p>
+        <div class="adm-crop-tools">
+          <label class="adm-zoom">Zoom <input type="range" id="dlg-zoom" min="1" max="4" step="0.01" value="1"></label>
+          <button type="button" class="adm-icon" id="dlg-uncrop">Undo crop</button>
+          <label class="adm-upload"><span>Replace photo</span><input type="file" id="dlg-file" accept="image/*"></label>
+        </div>
+        <p class="adm-row-msg" id="dlg-msg" role="status"></p>
+      </div>
+      <div class="adm-dlg-side">
+        <p class="adm-label">How it looks</p>
+        <div id="dlg-previews" class="adm-previews"></div>
+        <label class="adm-field">Description
+          <span class="adm-note">What's in the photo, for people using screen readers and for Google.</span>
+          <textarea id="dlg-alt" rows="3" maxlength="250"></textarea>
+        </label>
+        <p class="adm-error" id="dlg-alt-error" role="alert"></p>
+      </div>
+    </div>
+    <div class="adm-dlg-actions">
+      <button type="button" class="adm-icon" id="dlg-cancel">Cancel</button>
+      <button type="submit" class="btn btn-orange" id="dlg-done">Done</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="/assets/js/admin-common.js?v=a9bac426" defer></script>
+<script src="/assets/js/admin-photos.js?v=ae30ff13" defer></script>
+</body>
+</html>

@@ -11,6 +11,9 @@
   // in the dashboard and a routes key here would take them over.
   "keep_vars": true,
   "observability": { "enabled": true },
+  // The website admin's storage (/admin/: photos, testimonials, partners). See CLAUDE.md,
+  // "Website admin". The namespace is "bies-site" in the BIES Cloudflare account.
+  "kv_namespaces": [{ "binding": "SITE", "id": "2991b0594e384f18882f5f626b3fd657" }],
   "assets": {
     // The repo root IS the website. Anything not listed in .assetsignore is public.
     "directory": ".",
@@ -18,6 +21,9 @@
     // Both values are the defaults the site already runs with today (/about.html -> 307 /about,
     // unknown paths -> empty 404). Written out so nobody changes them by accident.
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "none"
+    "not_found_handling": "none",
+    // These pages pass through src/worker.js first, which writes in any photos saved on
+    // /admin/ (src/photos.js, PHOTO_PAGES). Every other file is still served straight away.
+    "run_worker_first": ["/", "/about", "/membership", "/faq", "/events", "/stories"]
   }
 }

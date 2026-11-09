@@ -1,0 +1,138 @@
+[
+ {
+  "id": "the-bitcoin-hardware-store",
+  "name": "The Bitcoin Hardware Store",
+  "url": "https://tbhs.sv/",
+  "logo": "/assets/images/partners/the-bitcoin-hardware-store.webp",
+  "size": 0.77,
+  "visible": true
+ },
+ {
+  "id": "acton-academy-montessori",
+  "name": "Acton Academy & Montessori El Salvador",
+  "url": "https://www.actonacademyelsalvador.com/",
+  "logo": "/assets/images/partners/acton-academy-montessori.webp",
+  "size": 0.92,
+  "visible": true
+ },
+ {
+  "id": "wespark",
+  "name": "WeSpark",
+  "url": "https://www.wespark.io/",
+  "logo": "/assets/images/partners/wespark.webp",
+  "size": 0.55,
+  "visible": true
+ },
+ {
+  "id": "the-reset-party",
+  "name": "The Reset Party",
+  "url": "https://www.instagram.com/the_resetparty/",
+  "logo": "/assets/images/partners/the-reset-party.webp",
+  "size": 1.09,
+  "visible": true
+ },
+ {
+  "id": "murphslife",
+  "name": "MurphsLife",
+  "url": "https://www.murphslifefoundation.com/",
+  "logo": "/assets/images/partners/murphslife.webp",
+  "size": 0.81,
+  "visible": true
+ },
+ {
+  "id": "finca-amaviora",
+  "name": "Finca Amaviora",
+  "url": "https://fincaamaviora.com/en",
+  "logo": "/assets/images/partners/finca-amaviora.webp",
+  "size": 0.9,
+  "visible": true
+ },
+ {
+  "id": "schelling-point",
+  "name": "Schelling Point",
+  "url": "https://schellingpoint.xyz/",
+  "logo": "/assets/images/partners/schelling-point.webp",
+  "size": 0.54,
+  "visible": true
+ },
+ {
+  "id": "acton-childrens-business-fair",
+  "name": "Acton Children’s Business Fair — Big Ideas Build El Salvador",
+  "url": "https://www.actonacademyelsalvador.com/bizcamp",
+  "logo": "/assets/images/partners/acton-childrens-business-fair.webp",
+  "size": 1.22,
+  "visible": true
+ },
+ {
+  "id": "berlin-el-salvador",
+  "name": "Berlin El Salvador",
+  "url": "https://www.bitcoinberlinsv.com/",
+  "logo": "/assets/images/partners/berlin-el-salvador.webp",
+  "size": 0.74,
+  "visible": true
+ },
+ {
+  "id": "north-wine",
+  "name": "North Wine Company",
+  "url": "https://www.north.wine/",
+  "logo": "/assets/images/partners/north-wine.webp",
+  "size": 0.73,
+  "visible": true
+ },
+ {
+  "id": "bitdriver",
+  "name": "BitDriver",
+  "url": "",
+  "logo": "",
+  "size": 1,
+  "visible": true
+ },
+ {
+  "id": "santa-burguesa",
+  "name": "Santa Burguesa",
+  "url": "",
+  "logo": "",
+  "size": 1,
+  "visible": true
+ },
+ {
+  "id": "the-fish-market",
+  "name": "The Fish Market",
+  "url": "",
+  "logo": "",
+  "size": 1,
+  "visible": true
+ },
+ {
+  "id": "fruttissimo",
+  "name": "Fruttissimo",
+  "url": "",
+  "logo": "",
+  "size": 1,
+  "visible": true
+ },
+ {
+  "id": "asobitcoin",
+  "name": "Asobitcoin",
+  "url": "",
+  "logo": "",
+  "size": 1,
+  "visible": true
+ },
+ {
+  "id": "villa-del-sol",
+  "name": "Villa del Sol",
+  "url": "https://www.instagram.com/villadelsol.sv",
+  "logo": "",
+  "size": 1,
+  "visible": true
+ },
+ {
+  "id": "btcpay-lite",
+  "name": "BTCPay Lite",
+  "url": "https://btcpaylite.com",
+  "logo": "",
+  "size": 1,
+  "visible": true
+ }
+]

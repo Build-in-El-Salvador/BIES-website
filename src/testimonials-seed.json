@@ -1,0 +1,418 @@
+{
+ "list": [
+  {
+   "id": "charlie-stevens",
+   "name": "Charlie Stevens",
+   "photo": "assets/images/testimonials/charlie.webp",
+   "title": "Founder",
+   "orgs": [
+    {
+     "name": "Schelling Point",
+     "url": "https://schellingpoint.xyz"
+    }
+   ],
+   "location": "Ireland",
+   "quote": "Build In El Salvador has been a lifeline, and I'm probably speaking not just for myself, but for a lot of other entrepreneurs here. The events that are held repeatedly, the well-curated content, the network effect from the group chats, and the quality of the entrepreneurs you end up merging with mean that you get to focus more on being an entrepreneur. It's like a filter for all of that bloat of information that exists online. If it's going through Build In El Salvador, you know it's good. There's not a dog-eat-dog environment. There's a collaborative environment where you bring ideas together and compound them to create value for other people.",
+   "short": "If it's going through Build In El Salvador, you know it's good.",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "brent-comstock",
+   "name": "Brent Comstock",
+   "photo": "assets/images/testimonials/brent.webp",
+   "title": "Founder",
+   "orgs": [
+    {
+     "name": "Finca Amaviora",
+     "url": "https://fincaamaviora.com/en"
+    }
+   ],
+   "location": "United States",
+   "quote": "What I see developing with Build in El Salvador is this exceptional group of people that have a lot of brilliant ideas, come together and share them, and it makes everyone better because of the collaborative spirit of the community.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "jess-allen",
+   "name": "Jess Allen",
+   "photo": "assets/images/testimonials/jess.webp",
+   "title": "Ghostwriter & AI Consultant",
+   "orgs": [],
+   "location": "United States",
+   "quote": "I love the Build in El Salvador group's collaborative energy because everyone shows up and we're all here to help each other win. It's a very welcoming energy and it's been pretty easy to plug in. If you're an entrepreneur and you have this desire to build, and you really want to live in an environment where you feel free to build, El Salvador is your country. Build In El Salvador is your community. We're here waiting for you.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "jethro-toro",
+   "name": "Jethro Toro",
+   "photo": "assets/images/testimonials/jethro.webp",
+   "title": "Media and Events Specialist",
+   "orgs": [
+    {
+     "name": "X Profile",
+     "url": "https://x.com/jethrotoro"
+    }
+   ],
+   "location": "United States",
+   "quote": "Build in El Salvador is one of the key hubs for bringing together people with different areas of expertise, and that knowledge sharing is real. When I first came to El Salvador, it was a lot of figuring things out on your own. But the BIES community has changed that completely. Now people can just land, immediately plug in with like-minded people, and start contributing what they bring to the table. I learned a new AI workflow directly from someone in the community, and then turned around and paid it forward to the group. That's the culture here.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "tom-taber",
+   "name": "Tom Taber",
+   "photo": "assets/images/testimonials/tom.webp",
+   "title": "Co-Founder",
+   "orgs": [
+    {
+     "name": "Origen Ganadero",
+     "url": "https://x.com/tomtaberhodl"
+    }
+   ],
+   "location": "United States",
+   "quote": "The Build in El Salvador roundtable was one of my first experiences in El Salvador and it had a profound impact on me. In just the first meeting, I had a whole social and business group to learn from and collaborate with instantly. I have developed some great friendships from it and have even cofounded a Salvadoran company, Origen Ganadero. The daily conversation keeps me informed, and it has been a very valuable place to ask questions from a deeply experienced peer group. Highly recommended!",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "bianca",
+   "name": "Bianca",
+   "photo": "assets/images/testimonials/bianca.webp",
+   "title": "Community member",
+   "orgs": [],
+   "location": "Turkey",
+   "quote": "It is through community that humans have not only survived but also thrived, and BIES is a prime example of how this carries forward into the modern age. Whether it is inputs on navigating laws, accounting, real estate development, regulations, taxes, insider information on upcoming changes we should be aware of, or anything else an entrepreneur needs to build in El Salvador (such as where to get a sizzling steak to reward your brain after a long day), this group has been an unparalleled source of wisdom and guidance for us, and a great way for us to pay it forward by sharing all that we have learnt along the way.",
+   "short": "BIES has been an unparalleled source of wisdom and guidance for us.",
+   "media": {
+    "kind": "image",
+    "src": "assets/images/gallery/post_bianca.webp",
+    "alt": "Bianca with Build in El Salvador"
+   },
+   "stories": true
+  },
+  {
+   "id": "diego-mauricio-villeda",
+   "name": "Diego & Mauricio Villeda",
+   "photo": "assets/images/testimonials/villeda.webp",
+   "title": "Founders",
+   "orgs": [
+    {
+     "name": "Bitcoin Life El Salvador",
+     "url": "https://www.bitcoinlife.sv/"
+    }
+   ],
+   "location": "El Salvador",
+   "quote": "You need to go where the magic is happening. Build In El Salvador is that place. Be around the ecosystem, be around all these bright-minded builders. You can create something, and you can become a better person.",
+   "short": "You need to go where the magic is happening. Build In El Salvador is that place.",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "paul-pendergrass",
+   "name": "Paul Pendergrass",
+   "photo": "assets/images/testimonials/paul.webp",
+   "title": "Land Developer",
+   "orgs": [
+    {
+     "name": "Club Cocal",
+     "url": "https://clubcocal.com/"
+    }
+   ],
+   "location": "United States",
+   "quote": "BIES is an amazing collection and community of people. There are forward thinkers, builders, doers, and creators of all types across all industries and facets of life. I always look forward to the discussions, and more importantly, to putting this stuff into action on the ground.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "angela-lewis",
+   "name": "Angela Lewis",
+   "photo": "assets/images/testimonials/angela.webp",
+   "title": "Hotel Manager",
+   "orgs": [
+    {
+     "name": "Villa del Sol",
+     "url": "https://www.instagram.com/villadelsol.sv"
+    }
+   ],
+   "location": "El Salvador",
+   "quote": "Being part of Builders in El Salvador has connected me with an inspiring community of creative, thoughtful people. Through the group, I've gained valuable insights into decentralized systems, circular economies, AI agents, and emerging initiatives happening across the country, which has helped influence my marketing and guest experiences. Just as importantly, BIES has given me a space to share what I'm building, learn from others, brainstorm ideas, discover resources, and feel supported in what can otherwise be a challenging entrepreneurial journey.",
+   "short": "BIES has given me a space to share what I'm building and feel supported on what can otherwise be a challenging entrepreneurial journey.",
+   "media": {
+    "kind": "image",
+    "src": "assets/images/gallery/post_lewis.webp",
+    "alt": "Angela Lewis with Build in El Salvador"
+   },
+   "stories": true
+  },
+  {
+   "id": "will-lehr",
+   "name": "Will Lehr",
+   "photo": "assets/images/testimonials/will.webp",
+   "title": "Founder",
+   "orgs": [
+    {
+     "name": "Club Cocal",
+     "url": "https://clubcocal.com/"
+    }
+   ],
+   "location": "United States",
+   "quote": "Build in El Salvador has rapidly become the go-to community for builders and entrepreneurs in El Salvador. It's a place where I can tap into a network of friends and like-minded builders for assistance with my business, growth, and networking needs. The impact of the community comes from the concentration of high-caliber people involved. Builders can drop right in, form meaningful partnerships, and create opportunities that add value to their businesses.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "jimmy-dicarlo",
+   "name": "Jimmy DiCarlo",
+   "photo": "assets/images/testimonials/jimmy.webp",
+   "title": "Founder",
+   "orgs": [
+    {
+     "name": "SELVA Villas & Retreat Center",
+     "url": "https://www.instagram.com/escapetoselva/"
+    }
+   ],
+   "location": "United States",
+   "quote": "Build in El Salvador has been a real accelerant for me. I've never been around this many high-agency, action-oriented builders in one place. The roundtables sharpen my thinking, the connections have helped move my projects forward, and the energy in the room constantly raises the bar. As I like to say, it's rare to find a group where everyone is actually doing the thing.",
+   "short": "It's rare to find a group where everyone is actually doing the thing.",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "ronny-avendano",
+   "name": "Ronny Avendaño",
+   "photo": "assets/images/testimonials/ronny.webp",
+   "title": "Founder",
+   "orgs": [
+    {
+     "name": "Bitcoin Hardware Store",
+     "url": "https://tbhs.sv"
+    }
+   ],
+   "location": "Canada / El Salvador",
+   "quote": "I never thought I'd be sitting in the National Palace with friends I met through Build in El Salvador. I didn't have that on my bingo card, but this is where we're at, and I'm very privileged to be here.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "jorge-cruz-rubio",
+   "name": "Jorge Cruz Rubio",
+   "photo": "assets/images/testimonials/jorge.webp",
+   "title": "Coffee Producer",
+   "orgs": [
+    {
+     "name": "Cherito Cafe",
+     "url": "https://www.cheritocafe.com"
+    }
+   ],
+   "location": "El Salvador",
+   "quote": "",
+   "short": "As locals, BIES allows us to help one another and give advice to people coming into El Salvador.",
+   "media": {
+    "kind": "video",
+    "src": "assets/images/gallery/post_cherito.mp4",
+    "poster": "assets/images/gallery/post_cherito_poster.webp"
+   },
+   "stories": true
+  },
+  {
+   "id": "fabian",
+   "name": "Fabian",
+   "photo": "assets/images/testimonials/fabian.webp",
+   "title": "Founder",
+   "orgs": [
+    {
+     "name": "Authentic Doc",
+     "url": "https://authenticdoc.online"
+    }
+   ],
+   "location": "Netherlands",
+   "quote": "I came to one of the Build In El Salvador events and realized there are a lot of builders here, a lot of activity happening. That really inspired me. This is a place full of people who actually want to create things, solve things, build things. That's what you need around you.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "amelie",
+   "name": "Amelie",
+   "photo": "assets/images/testimonials/amelie.webp",
+   "title": "Community member",
+   "orgs": [],
+   "location": "France",
+   "quote": "I've always been a builder and have always worked on my own, so what I value most about BIES is being part of a group where I can share ideas, ask for advice, and contribute to other builders' projects. Being surrounded by people who are actively creating and building in El Salvador makes me feel supported and connected. I'm grateful to be part of a community where we can bring our value, talent, and energy to help build a better future for this country.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "fernando-grijalba",
+   "name": "Fernando Grijalba",
+   "photo": "assets/images/testimonials/fernando.webp",
+   "title": "",
+   "orgs": [
+    {
+     "name": "Finca El Niagara",
+     "url": "https://www.instagram.com/elniagaracomasagua/"
+    }
+   ],
+   "location": "El Salvador",
+   "quote": "BIES represents the upcoming culture shift, the change happening in El Salvador, creating real-life investment opportunities for locals and foreigners. El Salvador is becoming a new country and BIES is helping to do so.",
+   "short": "BIES represents the upcoming culture shift happening in El Salvador.",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "maikel",
+   "name": "Maikel",
+   "photo": "assets/images/testimonials/maikel.webp",
+   "title": "Community member",
+   "orgs": [],
+   "location": "Netherlands",
+   "quote": "What I really like about Build In El Salvador is the entrepreneurial spirit I experienced at the roundtable. Back in Europe, I feel like we've lost a lot of that spirit. People are more cautious, more focused on safety, and there aren't as many risk takers anymore. That's what I like about the vibe here. If you're interested in entrepreneurship in El Salvador, this is probably one of the best places to start, because you're surrounded by a network of entrepreneurs who can offer advice, connections, and even capital if you have a good idea. If you're willing to take risks and put in your own time, effort, and resources, you'll find a lot of like-minded people here.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "nelson-inno",
+   "name": "Nelson Inno",
+   "photo": "assets/images/testimonials/nelson.webp",
+   "title": "Founder & Bitcoin Diploma Designer",
+   "orgs": [
+    {
+     "name": "WeSpark",
+     "url": "https://wespark.io"
+    },
+    {
+     "name": "EverybodyKnowsYou",
+     "url": "https://everybodyknowsyou.com"
+    }
+   ],
+   "location": "El Salvador",
+   "quote": "Almost overnight, the BIES community has become one of my main sources for news, innovation, startups, and ideas in El Salvador. The signal here is high, so builders and founders are clearly gravitating toward it. And it is only natural that the group keeps growing, as its value keeps compounding with every new member.",
+   "short": "The signal here is high, so builders and founders are clearly gravitating toward it.",
+   "media": {
+    "kind": "video",
+    "src": "assets/images/gallery/nelson_video.mp4",
+    "poster": "assets/images/gallery/nelson_video_poster.webp"
+   },
+   "stories": true
+  },
+  {
+   "id": "jonathan-gomez",
+   "name": "Jonathan Gomez",
+   "photo": "assets/images/testimonials/jonathan.webp",
+   "title": "Community member",
+   "orgs": [],
+   "location": "El Salvador",
+   "quote": "I want to give a big shout out to Build in El Salvador for helping us create an amazing event. I'm grateful to everyone who was involved in bringing it together, and I hope more people get to learn about the work being done here in El Salvador around organic and regenerative agriculture.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "mike",
+   "name": "Mike",
+   "photo": "",
+   "title": "Community member",
+   "orgs": [],
+   "location": "New Zealand",
+   "quote": "I made the leap to El Salvador without much of a plan, but once I was here I found the gaps, found my passion project, and joined Build in El Salvador to network and get my rock climbing gym in front of people. The community opened doors fast. I ended up meeting the right people, got some solid advice, and scored key meetings that are taking the project to the next phase. I even vibed up the BIES app in a day just to contribute something back. That's kind of the culture here. You show up, you plug in, and things start happening.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "eric-summers",
+   "name": "Eric Summers",
+   "photo": "assets/images/testimonials/eric.webp",
+   "title": "Community member",
+   "orgs": [],
+   "location": "United States",
+   "quote": "Becoming a member of the BIES community was a pivotal moment for me. Finding your tribe is super important when moving to a new country, and through this group I've met friends, mentors, collaborators, and clients. Collectively, the BIES members provide a wealth of knowledge and support. It's been a very rewarding experience working with the group.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "leon",
+   "name": "Leon",
+   "photo": "assets/images/testimonials/leon.webp",
+   "title": "Community member",
+   "orgs": [],
+   "location": "Germany",
+   "quote": "Through BIES, I quickly connected with an engaged community of entrepreneurs and builders. Within a short time, I was able to share my expertise by hosting a workshop, which made me feel welcomed, valued, and connected to the community from day one.",
+   "short": "",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "alan-chen-md",
+   "name": "Alan Chen, MD",
+   "photo": "assets/images/testimonials/alan.webp",
+   "title": "Doctor",
+   "orgs": [],
+   "location": "United States",
+   "quote": "The BIES community has linked me to other like-minded people looking to make better lives for themselves and everyone around them, including the locals of El Salvador. There are many meaningful discussions in areas with which I am not familiar. When I am not in El Salvador, I am also able to get a pulse on what is happening so that I can make smart decisions on my businesses in El Salvador. My ultimate goal is to create a retreat center in the beautiful mountains to expand on the health and wellness side of my business.",
+   "short": "The BIES community has linked me to other like-minded people looking to make better lives for themselves and everyone around them.",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "benne-wichman",
+   "name": "Benne Wichman",
+   "photo": "assets/images/testimonials/benne.webp",
+   "title": "Coach",
+   "orgs": [
+    {
+     "name": "Bennefit",
+     "url": "https://bennefit.coach/"
+    }
+   ],
+   "location": "Germany",
+   "quote": "Grateful to be part of Build in El Salvador, a country that draws people who question the default. So many bold ideas meet here, and decentralized mitochondrial health is one of them. To speak about nature, rhythm, sun, darkness, grounding, and EMF among these builders is decentralization of another kind: reclaiming how we think and how we live. I'm full of wonder for what we'll create together.",
+   "short": "Grateful to be part of Build in El Salvador. So many bold ideas meet here, and decentralized mitochondrial health is one of them.",
+   "media": null,
+   "stories": true
+  },
+  {
+   "id": "j-j-moore",
+   "name": "J.J. Moore",
+   "photo": "assets/images/testimonials/jjmoore.webp",
+   "title": "Community member",
+   "orgs": [],
+   "location": "United States",
+   "quote": "After several trips to El Salvador, I can say with confidence that Build in El Salvador isn't just a networking group, it's where the real operators are. These are the people with direct lines to the initiatives and individuals driving the country forward. The workshops and member calls have sharpened my thinking about what it would take to build there and the process of realizing my freedom agenda. As I get more serious about relocating to this beautiful country, this community keeps pulling me closer to the decision. The people inside it are already operating at the level I'm aiming for. If you are looking for the Bitcoin flywheel, this is it!",
+   "short": "",
+   "media": null,
+   "stories": true
+  }
+ ],
+ "placements": {
+  "homeHighlight": "nelson-inno",
+  "homeCards": [
+   "jimmy-dicarlo",
+   "bianca",
+   "charlie-stevens"
+  ],
+  "aboutCards": [
+   "jorge-cruz-rubio",
+   "fernando-grijalba",
+   "diego-mauricio-villeda"
+  ],
+  "membershipCards": [
+   "angela-lewis",
+   "alan-chen-md",
+   "benne-wichman"
+  ],
+  "membershipHighlight": "jethro-toro"
+ }
+}

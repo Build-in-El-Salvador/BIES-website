@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Testimonials | Website admin | Build in El Salvador</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=9b615b0d">
+<link rel="stylesheet" href="/assets/css/styles.css?v=81e72397">
+<link rel="stylesheet" href="/assets/css/admin.css?v=8834bd06">
+</head>
+<body class="adm-body">
+<header class="adm-top">
+  <a class="adm-brand" href="/"><img src="/assets/images/logos/logo-lockup.webp" alt="Build in El Salvador"></a>
+  <nav class="adm-nav" aria-label="Admin tools">
+    <a href="/admin/">Photos</a>
+    <a href="/admin/testimonials/" aria-current="page">Testimonials</a>
+    <a href="/admin/partners/">Partners</a>
+  </nav>
+  <button type="button" class="adm-link" id="signout" hidden>Sign out</button>
+</header>
+
+<main class="adm adm-wide">
+  <p id="loading" class="adm-note">Loading…</p>
+
+  <section id="setup" class="adm-card" hidden>
+    <h1>The admin page isn't switched on yet</h1>
+    <p>It needs its storage and an admin password set up in Cloudflare. The steps are in the website repository's CLAUDE.md, under "Website admin".</p>
+  </section>
+
+  <form id="signin" class="adm-card adm-signin" hidden novalidate>
+    <h1>Sign in</h1>
+    <label class="adm-field">Admin password
+      <input type="password" id="password" autocomplete="current-password" required>
+    </label>
+    <button type="submit" class="btn btn-orange">Sign in</button>
+    <p class="adm-error" id="signin-error" role="alert"></p>
+    <p class="adm-note">The password is in the BIES Bitwarden.</p>
+  </form>
+
+  <section id="editor" hidden>
+    <div class="adm-intro">
+      <h1>Testimonials</h1>
+      <p>Every member testimonial on the website. Each has a full quote, shown on the Community page and when highlighted, and a short quote for the small cards. Changes go live when you press Save.</p>
+    </div>
+
+    <section class="adm-sec adm-places" aria-labelledby="places-h">
+      <h2 id="places-h">Where they appear</h2>
+      <div id="places" class="adm-place-grid"></div>
+    </section>
+
+    <section class="adm-group" aria-labelledby="all-h">
+      <div class="adm-group-head">
+        <h2 id="all-h">All testimonials</h2>
+        <span class="adm-note" id="count"></span>
+        <a href="/stories" target="_blank" rel="noopener">Open the Community page</a>
+      </div>
+      <p class="adm-note">In the order the Community page shows them.</p>
+      <ol class="adm-trows" id="list"></ol>
+      <button type="button" class="btn btn-blue" id="add">Add testimonial</button>
+    </section>
+
+    <div class="adm-savebar">
+      <p id="save-status" role="status">All changes saved.</p>
+      <button type="button" class="btn btn-orange" id="save" disabled>Save changes</button>
+    </div>
+  </section>
+</main>
+
+<dialog id="t-dialog" class="adm-dialog" aria-labelledby="t-title">
+  <form id="t-form" novalidate>
+    <div class="adm-dlg-head"><h2 id="t-title">Edit testimonial</h2></div>
+    <div class="adm-dlg-body adm-t-body">
+      <div class="adm-dlg-main">
+        <div class="adm-t-photo">
+          <div class="adm-t-avatar" id="t-avatar"></div>
+          <div class="adm-t-photo-actions">
+            <label class="adm-upload"><span id="t-photo-label">Upload photo</span><input type="file" id="t-photo-file" accept="image/*"></label>
+            <button type="button" class="adm-link" id="t-photo-remove">Remove photo</button>
+            <p class="adm-note">A square crop from the middle of the photo, so center the face.</p>
+          </div>
+        </div>
+        <label class="adm-field">Name <input type="text" id="t-name" maxlength="80" required></label>
+        <label class="adm-field">Title <span class="adm-note">For example "Founder" or "Community member".</span><input type="text" id="t-role" maxlength="80"></label>
+        <div class="adm-t-orgs">
+          <label class="adm-field">Business <input type="text" id="t-org1" maxlength="80"></label>
+          <label class="adm-field">Its website or Instagram <input type="url" id="t-url1" maxlength="300" placeholder="https://" inputmode="url"></label>
+          <label class="adm-field">Second business <input type="text" id="t-org2" maxlength="80"></label>
+          <label class="adm-field">Its website or Instagram <input type="url" id="t-url2" maxlength="300" placeholder="https://" inputmode="url"></label>
+        </div>
+        <label class="adm-field">Country <input type="text" id="t-loc" maxlength="40"></label>
+      </div>
+      <div class="adm-dlg-side">
+        <label class="adm-field">Full quote <span class="adm-note">On the Community page and when highlighted.</span>
+          <textarea id="t-quote" rows="8" maxlength="2500"></textarea>
+        </label>
+        <label class="adm-field">Short quote <span class="adm-note">One sentence for the small cards on Home, About and Membership.</span>
+          <textarea id="t-short" rows="3" maxlength="300"></textarea>
+        </label>
+        <div class="adm-field"><span>Picture on the Community card <span class="adm-note">(optional)</span></span>
+          <div class="adm-t-media" id="t-media"></div>
+          <div class="adm-t-photo-actions">
+            <label class="adm-upload"><span id="t-media-label">Add a picture</span><input type="file" id="t-media-file" accept="image/*"></label>
+            <button type="button" class="adm-link" id="t-media-remove">Remove</button>
+          </div>
+        </div>
+        <label class="adm-check"><input type="checkbox" id="t-stories"> Show on the Community page</label>
+        <p class="adm-row-msg" id="t-msg" role="status"></p>
+        <p class="adm-error" id="t-error" role="alert"></p>
+      </div>
+    </div>
+    <div class="adm-dlg-actions">
+      <button type="button" class="adm-icon" id="t-cancel">Cancel</button>
+      <button type="submit" class="btn btn-orange">Done</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="/assets/js/admin-common.js?v=a9bac426" defer></script>
+<script src="/assets/js/admin-testimonials.js?v=2b65c944" defer></script>
+</body>
+</html>

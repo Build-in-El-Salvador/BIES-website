@@ -242,6 +242,22 @@ section{position:relative}
 .tcard .who .loc{display:block;margin-top:.3rem;font-size:.8rem;font-weight:600;opacity:.95}
 .band-orange .tcard a,.band-blue .tcard a,.band-navy .tcard a{color:#fff;text-decoration:underline}
 .feature-quote .fq-loc{display:block;margin-top:.5rem;font-family:var(--font-body);font-weight:600;font-size:.85rem;color:var(--orange)}
+.band-orange .feature-quote{background:var(--surface);max-width:980px;margin:2.2rem auto 0}
+/* Home "What Members Are Saying": the highlight and the cards that swap into it (members.js) */
+.members [hidden]{display:none!important}
+.feature-quote .fq-who b{font:inherit}
+.feature-quote .fq-who a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.member-spot{scroll-margin-top:110px;transition:opacity .16s ease}
+.member-spot .fq-quote{font-size:clamp(1.3rem,2.3vw,1.85rem);line-height:1.22}
+.member-spot .fq-quote.is-long{font-size:clamp(1.1rem,1.7vw,1.4rem);line-height:1.32}
+.member-card{transition:opacity .16s ease,background-color .18s ease,transform .18s ease;border-radius:16px;padding:.8rem .6rem 1.1rem}
+.members .is-fading{opacity:0}
+.member-card.is-pickable{cursor:pointer}
+@media (hover:hover){.member-card.is-pickable:hover{background:rgba(255,255,255,.12);transform:translateY(-3px)}}
+.member-more{margin-top:1rem;background:none;color:inherit;border:1.5px solid currentColor;border-radius:999px;padding:.45rem 1.05rem;font:600 .82rem/1 var(--font-body);cursor:pointer;transition:background-color .18s ease}
+.member-more:hover{background:rgba(255,255,255,.18)}
+.member-more:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.member-spot,.member-card{transition:none}}
 .band-orange .avatar{background:var(--navy)}
 .band-blue .avatar{background:var(--orange)}
 .band-snow .avatar,.band-white .avatar{background:var(--cobalt);border-color:rgba(0,71,171,.18)}
@@ -385,6 +401,7 @@ section{position:relative}
   /* tiny uniform side gutter on the whole page content (incl. full-width colored bands) */
   /* About hero: 3rd image spans the full width on mobile */
   .photo-strip.cols-3 img:nth-child(3){grid-column:1 / -1;aspect-ratio:16/10}
+  .photo-strip.cols-5 img:nth-child(5){grid-column:1 / -1;aspect-ratio:16/10}
 }
 @media (min-width:881px) and (max-width:1080px){
   .masonry{columns:2}

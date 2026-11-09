@@ -53,10 +53,15 @@ assets/
   css/events.css   the Events page only (own ?v=)
   js/main.js       nav toggle + scroll reveal
   js/events.js     the Events page only (own ?v=)
+  js/members.js    home "What Members Are Saying" swap (own ?v=)
+  js/partners.js   About page partner logos from /api/partners (own ?v=)
+  js/admin-*.js, css/admin.css   the admin pages
   js/team.js       About page team cards: click a card to open its bio (own ?v=)
   data/            local preview sample for events.html (not deployed)
   images/          site images; images/gallery/ holds photos + .mp4 video
-src/worker.js      /api/events (not deployed as an asset)
+src/worker.js      /api/events, /events/<code>, NIP-05 (not deployed as an asset)
+src/admin.js       website admin routes; photos.js, testimonials.js, partners.js, admin-lib.js (see Website admin)
+admin/             the admin pages (noindex; robots.txt disallows /admin/)
 src/preview.mjs    local preview server
 wrangler.jsonc  .assetsignore
 ```
@@ -86,6 +91,57 @@ wrangler.jsonc  .assetsignore
   no pretix script and sets no cookies.
 - If a Content-Security-Policy is ever added, allow `img-src https://tickets.buildinelsalvador.com`
   (covers) and keep `connect-src 'self'` (`/api/events`).
+
+## Website admin
+
+BIES admins edit three things at `buildinelsalvador.com/admin/`, with no code change or
+deploy: **Photos** (`/admin/`), **Testimonials** (`/admin/testimonials/`) and **Partners**
+(`/admin/partners/`). The pages are `admin/**/index.html` with `assets/js/admin-*.js` and
+`assets/css/admin.css`. The server side is `src/admin.js` (routes), `src/admin-lib.js`
+(sign-in, uploads), `src/photos.js`, `src/testimonials.js` and `src/partners.js`.
+
+- **Storage:** one Workers KV namespace bound as `SITE`. It holds:
+  - `photos:sections` and `photo:<id>` (uploads)
+  - `testimonials:data` and `timg:<id>`
+  - `partners:list` and `logo:<id>`
+
+  Unsaved uploads expire after a day.
+- **How saved edits reach visitors:** `wrangler.jsonc` lists `/`, `/about`, `/membership`,
+  `/faq`, `/events` and `/stories` in `assets.run_worker_first`. For those pages the Worker
+  writes saved photos and testimonials into the HTML before sending it, so there is no flash
+  and search engines see the new content. KV reads are edge-cached for 60 s, so a save shows
+  within a minute. With nothing saved, or on any error, the page is the plain file.
+- **Editable spots are marked in the HTML:**
+  - photos: `data-photos="<id>"` on a strip `<div>` or an `<img>`; the list is `SECTIONS` in `src/photos.js`
+  - testimonials: `<!-- testimonials:<key> -->…<!-- /testimonials:<key> -->` comments
+
+  Keep the markers when editing pages. **Once testimonials have been saved on the admin
+  page, edit them there, not in the HTML:** the saved copy replaces the marked spots. The
+  starting list is `src/testimonials-seed.json`, made from the HTML on 2026-11-09.
+- **Partners:** `assets/js/partners.js` redraws the About strip from `/api/partners` (cached a
+  minute). A partner only shows with a logo and "Show on website" ticked.
+- **Sign-in:** one shared password, the Worker secret `ADMIN_PASSWORD` (kept in the BIES
+  Bitwarden). Sessions last 12 hours and are signed with the secret `ADMIN_SESSION_KEY`;
+  changing that key signs everyone out. Eight wrong passwords from one IP block sign-in for
+  15 minutes. Every change needs a same-site `Origin` header.
+- **Uploads:** the browser shrinks photos (longest side 2000 px), logos (660x260, edges
+  trimmed) and profile photos (320 px square) before upload. That also drops camera and
+  location data. The Worker accepts only WebP, JPEG or PNG, and checks the file bytes.
+- **Cropping photos:** the photo editor shows the whole photo with a box for the part the
+  website shows (and a dashed one for phones where the shape differs). Moving the box only
+  changes the saved `pos` (CSS object-position). A box smaller than the frame is a crop: the
+  browser cuts it from the original, uploads the copy as `src`, and saves `orig` (the photo it
+  came from) and `crop` ([x, y, w, h] fractions of `orig`) so it can be changed later. Pages
+  only use `src` and `pos`.
+- **Switched on 2026-11-09:** the KV namespace `bies-site` is bound in `wrangler.jsonc`.
+  The two secrets are set (or changed) from this folder with
+  `npx wrangler secret put ADMIN_PASSWORD` and `npx wrangler secret put ADMIN_SESSION_KEY`
+  (any long random string, e.g. `openssl rand -base64 48`), or in the dashboard under
+  Workers → bies-website → Settings → Variables and Secrets. Until both are set, `/admin/`
+  says it isn't set up; the pages work either way.
+- **Local preview:** `node src/preview.mjs` stands in for KV with `.wrangler/preview-kv.json`
+  and reads the two secrets from `.dev.vars` (git-ignored). To start over, stop the server,
+  delete the JSON file, and start it again (the server keeps the data in memory).
 
 ## Conventions
 

@@ -46,8 +46,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
-<link rel="stylesheet" href="assets/css/tokens.css?v=4bfaf206">
-<link rel="stylesheet" href="assets/css/styles.css?v=ad529790">
+<link rel="stylesheet" href="assets/css/tokens.css?v=9b615b0d">
+<link rel="stylesheet" href="assets/css/styles.css?v=81e72397">
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@graph": [
@@ -253,8 +253,8 @@
   <img class="decor conn conn-a" src="assets/images/icons/connector-4.webp" alt="" aria-hidden="true" style="top:16%;right:1.5%;width:clamp(85px,9vw,140px)">
   <span class="eyebrow">What is Build in El Salvador?</span>
   <h1>Entrepreneurship on the Frontier, Surrounded by Peers, Confidants &amp; Friends</h1>
-  <div class="photo-strip cols-3" style="margin-bottom:clamp(1rem,2vw,1.75rem)">
-    <img src="assets/images/hero/about-1.webp" alt="BIES community gathering" fetchpriority="high">
+  <div class="photo-strip cols-3" style="margin-bottom:clamp(1rem,2vw,1.75rem)" data-photos="about-strip">
+    <img src="assets/images/hero/about-speaker.webp" alt="A speaker presenting at a BIES event" fetchpriority="high" style="object-position:40% 50%">
     <img src="assets/images/hero/about-2.webp" alt="The landscape of El Salvador">
     <img src="assets/images/hero/about-audience.webp" alt="BIES members listening to a talk" style="object-position:40% 50%">
   </div>
@@ -350,7 +350,7 @@
 
 <section class="section wrap">
   <div class="quote-hero reveal">
-    <img src="assets/images/gallery/community-group.webp" alt="The BIES community together under the Build in El Salvador banner" loading="lazy">
+    <img data-photos="about-quote" src="assets/images/gallery/community-group.webp" alt="The BIES community together under the Build in El Salvador banner" loading="lazy">
     <p class="q">&ldquo;The masterminds bubbling up out of this group is super inspiring.&rdquo; &nbsp;Jess Allen</p>
   </div>
 </section>
@@ -369,6 +369,7 @@
   <div class="wrap center">
     <span class="eyebrow on-blue">Builder Stories</span>
     <h2>What Members Are Saying…</h2>
+<!-- testimonials:about -->
     <div class="grid3">
         <figure class="tcard reveal">
           <img class="avatar" src="assets/images/testimonials/jorge.webp" alt="Jorge Cruz Rubio" loading="lazy" width="140" height="140">
@@ -385,13 +386,14 @@
           <blockquote><p>&ldquo;You need to go where the magic is happening. Build In El Salvador is that place.&rdquo;</p></blockquote>
           <figcaption class="who"><b>Diego &amp; Mauricio Villeda</b><span>Founders, <a href="https://www.bitcoinlife.sv/" target="_blank" rel="noopener">Bitcoin Life El Salvador</a></span><span class="loc"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true" style="vertical-align:-1px;margin-right:3px;fill:currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>El Salvador</span></figcaption>
         </figure></div>
+<!-- /testimonials:about -->
   </div>
 </section>
 
 
 <section class="section wrap">
   <div class="split media-left reveal">
-    <img src="assets/images/gallery/contribute.webp" alt="BIES community group photo in El Salvador" loading="lazy">
+    <img data-photos="about-contribute" src="assets/images/gallery/contribute.webp" alt="BIES community group photo in El Salvador" loading="lazy">
     <div class="copy">
       <h2>How We Contribute to El Salvador's Growth &amp; Revitalization</h2>
       <p>The National Bitcoin Office (ONBTC) under President Nayib Bukele envisions dynamic new projects emerging from El Salvador that contribute to the nation's revitalization and rebirth. A Renaissance 2.0.</p>
@@ -408,7 +410,7 @@
     <span class="eyebrow">Our Network</span>
     <h2>Partners and Collaborators</h2>
   </div>
-  <div class="logo-strip reveal">
+  <div class="logo-strip reveal" data-partners>
     <span><a href="https://tbhs.sv/" target="_blank" rel="noopener"><img src="assets/images/partners/the-bitcoin-hardware-store.webp" alt="The Bitcoin Hardware Store" loading="lazy" style="--lh:0.77"></a></span>
     <span><a href="https://www.actonacademyelsalvador.com/" target="_blank" rel="noopener"><img src="assets/images/partners/acton-academy-montessori.webp" alt="Acton Academy &amp; Montessori El Salvador" loading="lazy" style="--lh:0.92"></a></span>
     <span><a href="https://www.wespark.io/" target="_blank" rel="noopener"><img src="assets/images/partners/wespark.webp" alt="WeSpark" loading="lazy" style="--lh:0.55"></a></span>
@@ -425,7 +427,7 @@
 
 
 <section class="signal" id="join">
-  <img class="bg" src="assets/images/hero/cta-bg.webp" alt="Volcano at sunset in El Salvador" loading="lazy">
+  <img data-photos="cta" class="bg" src="assets/images/hero/cta-bg.webp" alt="Volcano at sunset in El Salvador" loading="lazy">
   <div class="inner wrap">
     <span class="eyebrow on-navy">Tap Into the Signal</span>
     <h2>Join Our Ecosystem</h2>
@@ -559,5 +561,6 @@
   </div>
   <script src="assets/js/main.js?v=4bfaf206" defer></script>
   <script src="assets/js/team.js?v=e2007a36" defer></script>
+  <script src="assets/js/partners.js?v=a53a236f" defer></script>
 </body>
 </html>

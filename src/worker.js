@@ -9,6 +9,10 @@
  *   GET /api/events         ->  the JSON that the Events page (events.html) renders.
  *   GET /events/<code>      ->  the Events page with that event's link-preview tags,
  *                               e.g. /events/sn260926 (see eventPage).
+ *   /api/partners, /api/admin/*, /partner-logos/*, /site-photos/*
+ *                           ->  the website admin (src/admin.js): partner logos and page photos.
+ *   /, /about, /membership, /faq, /events, /stories
+ *                           ->  the page, with any photos saved on /admin/ written in (src/photos.js).
  *   GET /.well-known/nostr.json
  *                           ->  NIP-05 lookups for name@buildinelsalvador.com, passed
  *                               through to the BIES app, which issues those names.
@@ -20,6 +24,9 @@
  * it adds three extras the public pages do not carry: a per-event "host" and
  * "status" (organizer event properties) and map coordinates.
  */
+
+import { isSitePath, siteRoute } from './admin.js';
+import { PHOTO_PAGES, pageWithPhotos, withPhotos } from './photos.js';
 
 const CFG = {
   pretix: 'https://tickets.buildinelsalvador.com',
@@ -55,9 +62,12 @@ export default {
     const { pathname } = new URL(request.url);
     if (pathname === '/api/events') return eventsRoute(request, env, ctx);
     if (pathname === '/.well-known/nostr.json') return nip05Route(request);
+    if (isSitePath(pathname)) return siteRoute(request, env, ctx);
     if (pathname.startsWith('/api/')) return json({ error: 'not_found' }, 404);
     const page = EVENT_PAGE_RE.exec(pathname);
     if (page && (request.method === 'GET' || request.method === 'HEAD')) return eventPage(request, env, ctx, page[1]);
+    // Pages with admin-editable photos (wrangler.jsonc: assets.run_worker_first).
+    if (PHOTO_PAGES.has(pathname) && (request.method === 'GET' || request.method === 'HEAD')) return pageWithPhotos(request, env);
     // Anything else that reached the script matched no file: let the assets
     // layer answer exactly as it did before this Worker had a script.
     return env.ASSETS.fetch(request);
@@ -166,7 +176,8 @@ async function eventPage(request, env, ctx, code) {
   }
   // Without event data (pretix down and nothing saved, or a host that doesn't build it)
   // this is the plain Events page, whose script shows its own fallback.
-  const html = ev ? eventHead(await base.text(), ev) : await base.text();
+  const page = await withPhotos(await base.text(), env);
+  const html = ev ? eventHead(page, ev) : page;
   return new Response(request.method === 'HEAD' ? null : html, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',

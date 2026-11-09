@@ -32,6 +32,8 @@
   --surface:   #FFFFFF;           /* cards / panels */
   --line:      #E6E2E0;           /* hairlines */
   --panel:     #ECE6E1;           /* highlighted gray section background */
+  --danger:    #B42318;           /* errors and destructive actions (admin page) */
+  --success:   #067647;           /* confirmations (admin page) */
 
   /* ---- Footer credit colors (read by the EKY credit logo) ---- */
   --footer-bg: var(--navy);
