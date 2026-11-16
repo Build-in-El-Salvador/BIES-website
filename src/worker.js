@@ -17,9 +17,9 @@
  *                           ->  NIP-05 lookups for name@buildinelsalvador.com, passed
  *                               through to the BIES app, which issues those names.
  *
- * pretix at tickets.buildinelsalvador.com is the single source of event data:
- * staff publish, edit and sell events there, and nobody edits this repo per
- * event. Only pretix's PUBLIC pages are read, so no secret is needed. If a
+ * pretix at tickets.buildinelsalvador.com supplies the legacy event listings.
+ * A temporary Satlantis listing is maintained in assets/js/featured-events.js.
+ * Only pretix's PUBLIC pages are read, so no secret is needed. If a
  * read-only pretix API token is ever stored as the Worker secret PRETIX_TOKEN,
  * it adds three extras the public pages do not carry: a per-event "host" and
  * "status" (organizer event properties) and map coordinates.
@@ -27,6 +27,7 @@
 
 import { isSitePath, siteRoute } from './admin.js';
 import { PHOTO_PAGES, pageWithPhotos, withPhotos } from './photos.js';
+import { withFeaturedEvents } from '../assets/js/featured-events.js';
 
 const CFG = {
   pretix: 'https://tickets.buildinelsalvador.com',
@@ -103,6 +104,24 @@ async function nip05Route(request) {
 }
 
 async function eventsRoute(request, env, ctx) {
+  const response = await pretixEventsRoute(request, env, ctx);
+  if (!response.ok && response.status < 500) return response;
+  const data = response.ok ? await response.json() : {
+    generated_at: new Date().toISOString(),
+    stale: false,
+    history_unavailable: true,
+    upcoming: [],
+    past: [],
+  };
+  // Overlay the local event even if pretix is unavailable or its cached data is
+  // older than this listing. Leave the existing provider cache independent.
+  if (!response.ok) return json(withFeaturedEvents(data), 200, CFG.retrySeconds);
+  const headers = new Headers(response.headers);
+  headers.delete('Content-Length');
+  return new Response(JSON.stringify(withFeaturedEvents(data)), { status: response.status, headers });
+}
+
+async function pretixEventsRoute(request, env, ctx) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return json({ error: 'method_not_allowed' }, 405, 0, { Allow: 'GET, HEAD' });
   }

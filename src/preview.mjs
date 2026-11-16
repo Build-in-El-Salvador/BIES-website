@@ -1,6 +1,8 @@
 // Local preview of the whole site WITH live event data, no dependencies:
 //
 //   node src/preview.mjs          then open http://localhost:8788/events
+//   node src/preview.mjs --events-file /absolute/path/events.json
+//     uses a saved public event feed for a reproducible, offline history preview
 //
 // Serves the repo root like the live Worker does (/about -> about.html). Like Cloudflare,
 // any path that matches no file goes to src/worker.js: /api/events (run against the real,
@@ -31,6 +33,17 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
 // s-maxage (else max-age) in its Cache-Control header, so pretix edits show up locally
 // on the same 2-minute schedule as in production.
 const memory = new Map();
+const snapshotArg = process.argv.indexOf('--events-file');
+if (snapshotArg !== -1) {
+  const path = process.argv[snapshotArg + 1];
+  if (!path) throw new Error('--events-file requires a JSON file path');
+  const snapshot = JSON.parse(await readFile(path, 'utf8'));
+  if (!Array.isArray(snapshot.upcoming) || !Array.isArray(snapshot.past)) throw new Error('Invalid event snapshot');
+  memory.set(`http://localhost:${PORT}/api/events`, {
+    res: new Response(JSON.stringify(snapshot), { headers: { 'Content-Type': 'application/json' } }),
+    expires: Infinity,
+  });
+}
 globalThis.caches = { default: {
   match: async (req) => {
     const hit = memory.get(req.url);
