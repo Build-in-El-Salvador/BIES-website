@@ -53,6 +53,7 @@ test('calendar reads are anonymous, cached, and fall back to saved metadata with
     requests++;
     assert.equal(url, 'https://api.satlantis.io/calendar/1000236/events');
     assert.equal(options.credentials, 'omit');
+    assert.equal(options.redirect, 'manual');
     assert.equal(options.headers.Authorization, undefined);
     return Response.json([sample]);
   };

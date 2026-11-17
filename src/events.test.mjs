@@ -31,6 +31,7 @@ async function usingFeed(feed, run) {
     requests.push({ url, options });
     assert.equal(url, feedUrl, 'Only the fixed public calendar is fetched');
     if (feed instanceof Error) throw feed;
+    if (feed instanceof Response) return feed.clone();
     return Response.json(feed);
   };
   const env = { ASSETS: { fetch: async () => new Response(html, { headers: { 'Content-Type': 'text/html' } }) } };
@@ -57,7 +58,7 @@ test('combined public endpoint preserves history and never forwards visitor cred
     assert.equal(requests.length, 1);
     assert.equal(requests[0].options.credentials, 'omit');
     assert.deepEqual(requests[0].options.headers, { Accept: 'application/json' });
-    assert.equal(requests[0].options.redirect, 'error');
+    assert.equal(requests[0].options.redirect, 'manual');
   });
 });
 
@@ -98,6 +99,17 @@ test('malformed calendar responses and upstream outages retain a clearly marked 
       assert.equal(data.upcoming[0].attendees, undefined);
     });
   }
+});
+
+test('calendar redirects are rejected using Cloudflare-supported manual mode', async () => {
+  const redirect = new Response(null, { status: 302, headers: { Location: 'https://unrecognized.example/events' } });
+  await usingFeed(redirect, async ({ env, ctx, requests }) => {
+    const data = await (await worker.fetch(new Request(`${origin}/api/events`), env, ctx)).json();
+    assert.equal(data.upcoming_stale, true);
+    assert.equal(data.upcoming[0].provider_id, '1003085');
+    assert.equal(requests.length, 1, 'Redirect destination is never fetched');
+    assert.equal(requests[0].options.redirect, 'manual');
+  });
 });
 
 test('event share metadata escapes hostile titles and rejects unsafe cover URLs', async () => {

@@ -70,7 +70,9 @@ export async function satlantisEvents(request, ctx) {
   if (cached) return { events: refreshDates((await cached.json()).events), stale: false };
   try {
     const response = await fetch(FEED, {
-      headers: { Accept: 'application/json' }, credentials: 'omit', redirect: 'error',
+      // Workers supports manual redirects; the !ok check below rejects 3xx
+      // responses without following them to another host.
+      headers: { Accept: 'application/json' }, credentials: 'omit', redirect: 'manual',
       signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) throw new Error(`Satlantis HTTP ${response.status}`);
