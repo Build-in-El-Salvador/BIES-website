@@ -70,15 +70,42 @@ wrangler.jsonc  .assetsignore
 
 - **pretix supplies legacy listings.** Existing events are managed at
   `tickets.buildinelsalvador.com` (organizer `bies`). Their history remains live.
-- **Temporary Satlantis exception (Mike, 2026-11-16):** the Christmas Party is
-  manually maintained in `assets/js/featured-events.js` until paid embeds/API
-  access are available. Mike confirmed Dec 16, 2026, 6–11 PM in El Salvador;
-  Satlantis's date fields still need to match. Keep unknown venue/map and ticket
-  prices/availability out of the listing. Ticket buttons open Satlantis.
-  The client and Worker share the same record, it appears even if pretix fails,
-  and it moves to Past after its end. Replace this exception when syncing arrives.
+- **Satlantis calendar (Mike, 2026-11-17):** Upcoming and Past use
+  the same native card renderer and full-width layout, growing in normal document
+  flow. There is no iframe, height cap or inner calendar scroller. The supplied
+  embed caps its own cards at 737px and does not send resize messages, so its
+  cross-origin contents cannot meet Mike's width and scrolling requirements.
+- **Read-only calendar adapter:** `src/satlantis.js` reads the anonymous public
+  feed used by the embed, `https://api.satlantis.io/calendar/1000236/events`.
+  This observed public endpoint is not a granted or documented partner API
+  contract; confirm its supported use and limits with Satlantis before relying on
+  it long term. No account credentials or partner keys are used. Only normalized
+  public event fields and up to six visible attendee names/photos leave the
+  adapter. Never proxy raw account objects, email addresses, a full guest list,
+  orders or payment records. Respect unlisted events and hidden attendees/location.
+  Fresh data is cached for 120 seconds; the one-day last-good metadata copy omits
+  attendee previews/counts. An outage shows saved metadata with a notice, or the
+  manual event fallback when no saved feed exists. A successful empty calendar
+  remains empty. Re-evaluate end dates on cache reads so events move to Past.
+- **Theme integration:** `events.js` synchronizes the event color tokens and the
+  Satlantis calendar fallback link with the website's selected theme. A future
+  website toggle should set `data-theme="light|dark"` on html/body or use a `.dark`
+  class; a CSS-only implementation can declare `color-scheme: dark`. The derived
+  html attribute `data-calendar-theme` selects the event color tokens. This does
+  not add a site-wide dark toggle. Device preferences alone do not darken a light site.
+- **Past-event presentation:** legacy events retain their pretix records and detail
+  links, displayed as Satlantis-style cards: circular date markers, poster on the
+  left (above the text on phones), venue, title, schedule and actual host. Attendee
+  data is not available for these records; do not invent names or attendance counts.
+- **Existing share links:** the manually maintained Christmas Party record in
+  `assets/js/featured-events.js` remains for the original event share URL, metadata
+  and detail popup when the calendar is unavailable. Successful calendar syncs use
+  the provider record and suppress the manual overlay, preserving the original
+  BIES slug. The confirmed Dec 16, 2026, 6–11 PM schedule matches Satlantis; the live
+  calendar now calls the event BIES Christmas Mixer 2026. Do not invent a venue,
+  ticket prices or availability. The record moves to Past after its end.
   The legacy staff recipe is `EVENTS-RUNBOOK.md` in the BIES CORE planning folder.
-- `/api/events` reads pretix's public pages: the widget JSON (upcoming and past
+- `/api/events` merges the Satlantis calendar with pretix's public pages: widget JSON (upcoming and past
   lists, description, tickets, prices, availability) and each event page's JSON-LD
   (exact start/end) and `og:image` (the event's "Social media image", used as the
   cover). Cached 2 minutes at the edge, plus a 7-day last-good copy for outages. If
@@ -94,10 +121,18 @@ wrangler.jsonc  .assetsignore
   that event's title, date and cover in its link-preview tags, filled in by the Worker, and
   the page opens that event's popup. Older `/events#SN260926` links still open the popup
   but preview as the generic Events page (link previews never see the `#` part).
-- Buying: the popup's button links to the pretix event page (new tab). The site loads
-  no pretix script and sets no cookies.
-- If a Content-Security-Policy is ever added, allow `img-src https://tickets.buildinelsalvador.com`
-  (covers) and keep `connect-src 'self'` (`/api/events`).
+- Buying: upcoming Satlantis cards link directly to Satlantis in a new tab. Legacy
+  event popups retain their provider links. The site loads no provider scripts.
+- If a Content-Security-Policy is ever added, allow public provider cover/avatar
+  image hosts (pretix, Satlantis CDN and attendee image hosts); keep
+  `connect-src 'self'` (`/api/events`).
+- **Regression checks:** `node --test src/satlantis.test.mjs src/events.test.mjs`
+  verifies the public projection, visibility flags, anonymous requests, caching,
+  empty calendars, outages, method/host guards and escaped share metadata. Share
+  URLs resolve only after the initial feed/fallback completes, preventing the
+  temporary event popup from surviving an authoritative empty calendar. Total
+  browser fetch failures must mark the saved event fallback as stale. Keep direct
+  next-event and past-event links available in the no-JavaScript fallback.
 
 ## Website admin
 

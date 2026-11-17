@@ -35,6 +35,14 @@
   --danger:    #B42318;           /* errors and destructive actions (admin page) */
   --success:   #067647;           /* confirmations (admin page) */
 
+  /* Calendar and event history: neutral surfaces matching the Satlantis embed. */
+  --event-bg:       #DDDDDD;
+  --event-surface:  #FFFFFF;
+  --event-ink:      #27272A;
+  --event-muted:    #71717A;
+  --event-line:     #E5E5E5;
+  --event-timeline: #FFFFFF;
+
   /* ---- Footer credit colors (read by the EKY credit logo) ---- */
   --footer-bg: var(--navy);
   --footer-fg: var(--snow);
@@ -49,4 +57,15 @@
 
   /* ---- Layout ---- */
   --max: 1180px;
+}
+
+/* Derived from the website's chosen theme by events.js. This does not enable
+   site-wide dark mode; it keeps these components ready for a future site toggle. */
+:root[data-calendar-theme="dark"]{
+  --event-bg:       #111113;
+  --event-surface:  #09090B;
+  --event-ink:      #FAFAFA;
+  --event-muted:    #A1A1AA;
+  --event-line:     #27272A;
+  --event-timeline: #737373;
 }

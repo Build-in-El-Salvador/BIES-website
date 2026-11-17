@@ -47,9 +47,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
-<link rel="stylesheet" href="/assets/css/tokens.css?v=9b615b0d">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=events-theme-1">
 <link rel="stylesheet" href="/assets/css/styles.css?v=81e72397">
-<link rel="stylesheet" href="/assets/css/events.css?v=satlantis-1">
+<link rel="stylesheet" href="/assets/css/events.css?v=satlantis-native-1">
 <noscript><style>.ev-skel{display:none}</style></noscript>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -84,17 +84,16 @@
   <span class="eyebrow">What's On</span>
   <h1>Build in El Salvador <span class="hero-accent">Events</span></h1>
   <p class="lead">Workshops, roundtables, socials and retreats where builders meet in person, trade ideas and build high-trust relationships. Pick an event for the details and tickets.</p>
-  <div class="cta-row"><a class="btn btn-ghost" href="#upcoming">See our next event</a></div>
 </section>
 
-<!-- Legacy events come from pretix through /api/events. The temporary Satlantis
-     listing is maintained in assets/js/featured-events.js until embeds are available. -->
+<!-- Upcoming and Past share native website cards and normal page scrolling.
+     /api/events reads the public Satlantis calendar and legacy pretix listings. -->
 <section class="wrap ev-section" id="upcoming" aria-labelledby="ev-upcoming-h">
   <div class="ev-section-head">
     <h2 class="ev-h2" id="ev-upcoming-h">Upcoming</h2>
-    <p class="ev-stale" id="ev-stale" hidden></p>
+    <p class="ev-stale" id="ev-upcoming-stale" hidden>Showing saved event details. Open Satlantis for the latest updates.</p>
   </div>
-  <ol class="ev-list" id="ev-upcoming" aria-busy="true">
+  <ol class="ev-list ev-calendar-list" id="ev-upcoming" aria-busy="true">
     <li class="ev-day ev-skel" aria-hidden="true">
       <div class="ev-rail"><span class="ev-sk ev-sk-date"></span></div>
       <div class="ev-day-cards"><div class="ev-card"><div class="ev-card-link"><div class="ev-card-body"><span class="ev-sk ev-sk-sm"></span><span class="ev-sk ev-sk-lg"></span><span class="ev-sk ev-sk-md"></span></div><div class="ev-card-cover"></div></div></div></div>
@@ -104,23 +103,24 @@
       <div class="ev-day-cards"><div class="ev-card"><div class="ev-card-link"><div class="ev-card-body"><span class="ev-sk ev-sk-sm"></span><span class="ev-sk ev-sk-lg"></span><span class="ev-sk ev-sk-md"></span></div><div class="ev-card-cover"></div></div></div></div>
     </li>
   </ol>
+  <p class="ev-calendar-note">See what’s coming up and who’s joining us. <a id="ev-calendar-link" href="https://www.satlantis.io/embed/c/1000236?theme=light" target="_blank" rel="noopener">Open calendar on Satlantis ↗</a></p>
   <div class="panel center ev-empty" id="ev-empty" hidden>
     <span class="soon-tag">Nothing scheduled yet</span>
     <h3>New events are on the way</h3>
     <p class="lead">We host one to three events a month. Join the newsletter to hear about the next one first.</p>
     <a class="btn btn-orange" href="https://buildinelsalvador.substack.com/" target="_blank" rel="noopener">Join the newsletter</a>
   </div>
+  <noscript><p class="ev-calendar-note">The calendar needs JavaScript. <a href="https://www.satlantis.io/events/1003085/bies-christmas-mixer-2026" target="_blank" rel="noopener">View our next event on Satlantis</a> or <a href="https://tickets.buildinelsalvador.com/bies/?old=1" target="_blank" rel="noopener">browse past events</a>.</p></noscript>
+</section>
+
+<section class="wrap ev-section" id="past" aria-labelledby="ev-past-h" hidden>
+  <div class="ev-section-head"><h2 class="ev-h2" id="ev-past-h">Past events</h2><p class="ev-stale" id="ev-stale" hidden></p></div>
+  <ol class="ev-list ev-calendar-list" id="ev-past"></ol>
   <div class="panel center ev-fallback" id="ev-fallback" hidden>
     <h3>Our past events couldn't load just now</h3>
     <p class="lead">You can still browse our event history on our previous ticket site.</p>
     <a class="btn btn-blue" href="https://tickets.buildinelsalvador.com/bies/?old=1" target="_blank" rel="noopener">See past events</a>
   </div>
-  <noscript><div class="panel center"><h3>BIES Christmas Party</h3><p class="lead">December 16, 2026 · 6–11 PM, El Salvador time. Venue to be announced.</p><a class="btn btn-orange" href="https://www.satlantis.io/events/1003085/bies-christmas-party" target="_blank" rel="noopener">View event &amp; tickets</a><p><a href="https://tickets.buildinelsalvador.com/bies/?old=1">Browse past events</a>.</p></div></noscript>
-</section>
-
-<section class="wrap ev-section" id="past" aria-labelledby="ev-past-h" hidden>
-  <div class="ev-section-head"><h2 class="ev-h2" id="ev-past-h">Past events</h2></div>
-  <ol class="ev-list" id="ev-past"></ol>
   <p class="ev-older"><a href="https://tickets.buildinelsalvador.com/bies/?old=1" target="_blank" rel="noopener">See every past event on our ticket site</a></p>
 </section>
 
@@ -296,6 +296,6 @@
   </div>
 </footer>
 <script src="/assets/js/main.js?v=4bfaf206" defer></script>
-<script type="module" src="/assets/js/events.js?v=satlantis-1"></script>
+<script type="module" src="/assets/js/events.js?v=satlantis-native-1"></script>
 </body>
 </html>

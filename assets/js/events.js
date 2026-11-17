@@ -1,11 +1,11 @@
 /* events.js — the Events page (events.html). Vanilla JS, no libraries.
  *
- * Reads /api/events (legacy pretix listings) and adds the temporary Satlantis
- * event, then renders the timeline and detail popups. Tickets are bought on
- * each event's own ticket site.
- * This page sets no cookies and loads no third-party scripts.
+ * Reads /api/events (public Satlantis calendar + legacy pretix listings), then
+ * renders one shared calendar layout and the legacy detail popups. Ticket
+ * purchases remain on each event's own ticket site.
+ * Upcoming uses the same native cards as Past; no iframe or nested scroller.
  */
-import { withFeaturedEvents } from './featured-events.js?v=satlantis-1';
+import { withFeaturedEvents } from './featured-events.js?v=satlantis-native-1';
 
 (() => {
   'use strict';
@@ -39,6 +39,38 @@ import { withFeaturedEvents } from './featured-events.js?v=satlantis-1';
   const baseTitle = document.title;
   let opener = null;
   let closingFromHistory = false;
+
+  // The website is light today, even on devices set to dark mode. A future site
+  // toggle can set data-theme="light|dark" on html/body, or use a .dark class.
+  // CSS-only dark themes can also declare color-scheme: dark.
+  function siteTheme() {
+    const root = document.documentElement;
+    for (const element of [root, document.body]) {
+      const value = element.dataset.theme;
+      if (value === 'light' || value === 'dark') return value;
+    }
+    if (root.classList.contains('dark') || document.body.classList.contains('dark')) return 'dark';
+    return getComputedStyle(root).colorScheme === 'dark' ? 'dark' : 'light';
+  }
+
+  function syncEventTheme() {
+    const theme = siteTheme();
+    document.documentElement.dataset.calendarTheme = theme;
+    const link = $('ev-calendar-link');
+    if (link) {
+      const url = new URL(link.href);
+      url.searchParams.set('theme', theme);
+      link.href = url.href;
+    }
+  }
+
+  syncEventTheme();
+  const themeObserver = new MutationObserver(syncEventTheme);
+  for (const element of [document.documentElement, document.body]) {
+    themeObserver.observe(element, { attributes: true, attributeFilter: ['data-theme', 'class', 'style'] });
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncEventTheme);
+  window.addEventListener('load', syncEventTheme, { once: true });
 
   // ---------- tiny DOM helpers (all text goes in via textContent) ----------
   function h(tag, props, ...kids) {
@@ -243,49 +275,74 @@ import { withFeaturedEvents } from './featured-events.js?v=satlantis-1';
     if (!group.date) return h('div', { class: 'ev-rail' }, h('time', null, h('span', { class: 'ev-rail-m', text: 'Date TBA' })));
     const { date, tz } = group;
     const thisYear = fmt(new Date(), tz, { year: 'numeric' }) === fmt(date, tz, { year: 'numeric' });
-    const label = fmt(date, tz, thisYear ? { month: 'short', day: 'numeric' } : { month: 'short', day: 'numeric', year: 'numeric' });
     return h('div', { class: 'ev-rail' },
-      h('time', { datetime: isoDay(date, tz) },
-        h('span', { class: 'ev-rail-m', text: label }),
-        h('span', { class: 'ev-rail-d', text: fmt(date, tz, { weekday: 'long' }) })));
+      h('time', { datetime: isoDay(date, tz), 'aria-label': fmt(date, tz, { dateStyle: 'full' }) },
+        dateBadge(date, tz),
+        h('span', { class: 'ev-rail-d', text: fmt(date, tz, { weekday: 'long' }) + (thisYear ? '' : ` · ${fmt(date, tz, { year: 'numeric' })}`) })));
   }
 
-  function card(ev) {
-    const tz = tzOf(ev), s = toDate(ev.start);
-    const time = h('p', { class: 'ev-card-time' });
-    if (s) time.append(timeRange(ev, tz), ' ', h('span', { class: 'ev-tz', text: offsetLabel(s, tz) }));
-    else time.append(ev.date_range || 'Date to be announced');
+  function dateBadge(date, tz) {
+    return h('span', { class: 'ev-date-badge', 'aria-hidden': 'true' },
+      h('b', { text: fmt(date, tz, { day: 'numeric' }) }),
+      h('small', { text: fmt(date, tz, { month: 'short' }) }));
+  }
 
-    const link = h('a', { class: 'ev-card-link', href: eventPath(ev.slug), 'data-slug': ev.slug, 'aria-haspopup': 'dialog' },
+  function calendarCard(ev) {
+    const tz = tzOf(ev), date = toDate(ev.start);
+    const external = ev.provider === 'satlantis' && !ev.is_past;
+    const when = date && h('div', { class: 'ev-event-when' },
+      dateBadge(date, tz),
+      h('time', { datetime: ev.start },
+        h('b', { text: fmt(date, tz, { weekday: 'long' }) }),
+        h('span', { text: `${timeRange(ev, tz)} · ${offsetLabel(date, tz)}` })));
+    const status = ev.status === 'cancelled' ? 'Cancelled' : ev.is_past ? 'Past event' : ev.category;
+    const link = h('a', { class: 'ev-card-link', href: external ? ev.tickets_url : eventPath(ev.slug),
+      'data-slug': external ? null : ev.slug, 'aria-haspopup': external ? null : 'dialog',
+      target: external ? '_blank' : null, rel: external ? 'noopener' : null },
+      h('div', { class: 'ev-card-cover' }, cover(ev, false),
+        status && h('span', { class: 'ev-event-status', text: status })),
       h('div', { class: 'ev-card-body' },
-        time,
+        ev.location && h('p', { class: 'ev-event-venue', text: ev.location }),
         h('h3', { class: 'ev-card-title', text: ev.title }),
-        ev.summary && h('p', { class: 'ev-card-description', text: ev.summary }),
-        ev.location && h('p', { class: 'ev-card-meta' }, icon('pin'), h('span', { text: ev.location })),
-        h('p', { class: 'ev-card-meta' },
-          h('img', { src: '/favicon-192x192.png', alt: '', width: 18, height: 18 }),
-          h('span', { text: `By ${ev.host}` })),
-        h('div', { class: 'ev-card-tags' }, chips(ev).map(chipEl))),
-      h('div', { class: 'ev-card-cover' }, cover(ev, false)));
-
-    if (typeof dialog.showModal !== 'function') { // very old browsers: go straight to the ticket site
+        when,
+        attendeePreview(ev) || h('p', { class: 'ev-event-host' },
+          h('img', { src: '/favicon-192x192.png', alt: '', width: 24, height: 24 }),
+          h('span', { text: `Hosted by ${ev.host}` }))));
+    if (typeof dialog.showModal !== 'function') {
       link.href = ev.tickets_url;
       link.target = '_blank';
       link.rel = 'noopener';
     }
-    const article = h('article', { class: `ev-card${ev.provider === 'satlantis' ? ' ev-card-featured' : ''}` }, link);
-    if (ev.provider === 'satlantis' && !ev.is_past && ev.status !== 'cancelled') {
-      article.append(h('div', { class: 'ev-card-footer' },
-        h('a', { class: 'btn btn-orange', href: ev.tickets_url, target: '_blank', rel: 'noopener',
-          text: 'View event & tickets' })));
+    return h('article', { class: 'ev-card' }, link);
+  }
+
+  function attendeePreview(ev) {
+    const total = ev.attendee_count;
+    if (!Number.isSafeInteger(total) || total <= 0) return null;
+    const people = Array.isArray(ev.attendees) ? ev.attendees.slice(0, Math.min(6, total)) : [];
+    const faces = people.map((person) => {
+      const initial = () => h('span', { class: 'ev-attendee-initial', text: person.name.slice(0, 1).toUpperCase(), 'aria-label': person.name });
+      if (!person.picture) return initial();
+      const img = h('img', { src: person.picture, alt: person.name, width: 33, height: 33, loading: 'lazy', decoding: 'async' });
+      img.addEventListener('error', () => img.replaceWith(initial()), { once: true });
+      return img;
+    });
+    const names = people.slice(0, 2).map((person) => person.name);
+    let label = `${total} ${total === 1 ? 'person has' : 'people have'} responded`;
+    if (names.length) {
+      const others = total - names.length;
+      label = others > 0 ? `${names.join(', ')} and ${others} ${others === 1 ? 'other' : 'others'} have responded`
+        : `${names.join(' and ')} ${total === 1 ? 'has' : 'have'} responded`;
     }
-    return article;
+    return h('div', { class: 'ev-event-attendees' },
+      faces.length > 0 && h('div', { class: 'ev-attendee-faces' }, faces),
+      h('p', { text: label }));
   }
 
   function renderList(listEl, events, isPast) {
     listEl.replaceChildren(...groupByDay(events).map((g, i) => {
       const li = h('li', { class: `ev-day${isPast ? ' is-past' : ''}`, style: `--i:${i}` },
-        rail(g), h('div', { class: 'ev-day-cards' }, g.events.map(card)));
+        rail(g), h('div', { class: 'ev-day-cards' }, g.events.map(calendarCard)));
       return li;
     }));
     listEl.removeAttribute('aria-busy');
@@ -510,7 +567,7 @@ import { withFeaturedEvents } from './featured-events.js?v=satlantis-1';
         name: ev.title,
         startDate: ev.start,
         eventStatus: `https://schema.org/${ev.status === 'cancelled' ? 'EventCancelled' : ev.status === 'postponed' ? 'EventPostponed' : 'EventScheduled'}`,
-        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        eventAttendanceMode: `https://schema.org/${ev.is_online ? 'OnlineEventAttendanceMode' : 'OfflineEventAttendanceMode'}`,
         url: eventUrl(ev.slug),
         organizer: { '@type': 'Organization', name: 'Build in El Salvador', url: 'https://buildinelsalvador.com/' },
       };
@@ -572,7 +629,7 @@ import { withFeaturedEvents } from './featured-events.js?v=satlantis-1';
       }
     }
     if (!data) {
-      render(withFeaturedEvents({ history_unavailable: true }));
+      render(withFeaturedEvents({ history_unavailable: true, upcoming_stale: true }));
       return;
     }
     render(withFeaturedEvents(data));
@@ -602,8 +659,9 @@ import { withFeaturedEvents } from './featured-events.js?v=satlantis-1';
 
     renderList(up, upcoming, false);
     $('ev-empty').hidden = upcoming.length > 0;
+    $('ev-upcoming-stale').hidden = !data.upcoming_stale;
     renderList(past, previous, true);
-    $('past').hidden = previous.length === 0;
+    $('past').hidden = previous.length === 0 && !data.history_unavailable;
     $('ev-fallback').hidden = !data.history_unavailable;
     $('ev-stale').hidden = !data.stale;
     if (data.stale) {
@@ -614,8 +672,9 @@ import { withFeaturedEvents } from './featured-events.js?v=satlantis-1';
     jsonLd(upcoming);
 
     const slug = routeSlug();
-    // A legacy event's share URL cannot be resolved until its history arrives.
-    if (pending && !slug) return;
+    // Resolve share URLs once the feed or outage fallback is final. Opening the
+    // temporary event now could leave its popup behind after an empty sync.
+    if (pending) return;
     if (slug) {
       openEvent(slug, false);
       // Show the event's own address, also when an older #SN260926 link brought them here.

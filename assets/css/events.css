@@ -15,6 +15,8 @@ html.ev-lock,html.ev-lock body{overflow:hidden}
 .ev-stale{font-size:.86rem;color:var(--muted)}
 .ev-older{margin-top:1.6rem;font-size:.95rem}
 .ev-older a{font-weight:600}
+.ev-calendar-note{margin-top:1rem;font-size:.9rem;line-height:1.6;color:var(--muted);text-align:center}
+.ev-calendar-note a{color:var(--accent-2);font-weight:600;white-space:nowrap}
 
 /* ---------- Timeline: one row per day, a date rail on the left (Luma's calendar list) ---------- */
 .ev-list{list-style:none;margin:0;padding:0;display:grid;gap:clamp(1.4rem,3vw,2.2rem)}
@@ -50,6 +52,47 @@ html.ev-lock,html.ev-lock body{overflow:hidden}
 .ev-card-footer{padding:0 1.4rem 1.3rem}
 .ev-card-footer .btn{font-size:.9rem}
 .ev-card-featured .ev-ph b{font-size:clamp(1.7rem,2.8vw,2.3rem);max-width:8ch;line-height:1}
+
+/* Upcoming and Past share one full-width layout in normal document flow. */
+.ev-calendar-list{padding:16px 16px 32px;gap:24px;border-radius:16px;background:var(--event-bg);color:var(--event-ink)}
+.ev-calendar-list:empty{display:none}
+.ev-calendar-list .ev-day{position:relative;grid-template-columns:1fr;gap:16px;padding-inline:31px}
+.ev-calendar-list .ev-day::before{content:"";position:absolute;left:2px;top:9px;bottom:-24px;border-left:1px dashed var(--event-timeline)}
+.ev-calendar-list .ev-day:last-child::before{bottom:0}
+.ev-calendar-list .ev-day::after{content:"";position:absolute;left:-1px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--event-timeline)}
+.ev-calendar-list .ev-rail{padding:0}
+.ev-calendar-list .ev-rail time{position:static;display:flex;align-items:center;gap:12px}
+.ev-calendar-list .ev-rail-d{margin:0;font-family:var(--font-body);font-size:1.15rem;font-weight:500;color:var(--event-ink)}
+.ev-date-badge{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:46px;height:46px;border:1px solid var(--event-line);border-radius:50%;line-height:1;color:var(--event-ink)}
+.ev-date-badge b{font-family:var(--font-body);font-size:1.15rem;font-weight:600}
+.ev-date-badge small{margin-top:3px;font-size:.6rem;font-weight:500;text-transform:uppercase;color:var(--event-muted)}
+.ev-calendar-list .ev-day-cards{padding:0;border:0;gap:16px}
+.ev-calendar-list .ev-day-cards::before{display:none}
+.ev-calendar-list .ev-card{background:var(--event-surface);border:1px solid var(--event-line);border-radius:16px;box-shadow:none}
+.ev-calendar-list .ev-card:hover{border-color:var(--event-muted);box-shadow:none;transform:none}
+.ev-calendar-list .ev-card-link{grid-template-columns:220px minmax(0,1fr);gap:32px;padding:24px;align-items:stretch}
+.ev-calendar-list .ev-card-cover{position:relative;width:220px;height:220px;aspect-ratio:1;border-radius:12px;background:var(--event-bg)}
+.ev-calendar-list .ev-card-cover img{width:100%;height:100%;object-fit:contain;object-position:center;filter:none;opacity:1}
+.ev-calendar-list .ev-ph{justify-content:center}
+.ev-event-status{position:absolute;left:10px;bottom:10px;padding:5px 11px;border-radius:999px;font-size:.75rem;font-weight:600;line-height:1.4;background:var(--event-surface);color:var(--event-ink)}
+.ev-calendar-list .ev-card-body{min-width:0;display:flex;flex-direction:column;padding:0}
+.ev-event-venue{font-size:.85rem;line-height:1.5;color:var(--event-muted)}
+.ev-calendar-list .ev-card-title{margin:5px 0 16px;font-family:var(--font-body);font-size:1.5rem;font-weight:700;line-height:1.25;letter-spacing:-.03em;color:var(--event-ink)}
+.ev-calendar-list .ev-card:hover .ev-card-title{color:var(--event-ink)}
+.ev-event-when{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.ev-event-when .ev-date-badge{width:38px;height:38px}
+.ev-event-when .ev-date-badge b{font-size:.95rem}
+.ev-event-when .ev-date-badge small{font-size:.5rem}
+.ev-event-when time{display:flex;flex-direction:column;line-height:1.5}
+.ev-event-when time b{font-size:.9rem;font-weight:500;color:var(--event-ink)}
+.ev-event-when time span{font-size:.75rem;color:var(--event-muted)}
+.ev-event-host{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:14px;border-top:1px solid var(--event-line);font-size:.8rem;line-height:1.5;color:var(--event-muted)}
+.ev-event-host img{flex:0 0 auto;width:24px;height:24px;border-radius:50%}
+.ev-event-attendees{display:grid;gap:6px;margin-top:auto;padding-top:14px;border-top:1px solid var(--event-line);font-size:.8rem;line-height:1.5;color:var(--event-muted)}
+.ev-attendee-faces{display:flex;padding-left:0}
+.ev-attendee-faces img,.ev-attendee-initial{flex:0 0 auto;width:33px;height:33px;border:2px solid var(--event-surface);border-radius:50%;object-fit:cover;background:var(--event-bg)}
+.ev-attendee-faces>:not(:first-child){margin-left:-7px}
+.ev-attendee-initial{display:grid;place-items:center;font-size:.75rem;font-weight:600;color:var(--event-ink)}
 
 /* ---------- Status chips ---------- */
 .ev-chip{display:inline-flex;align-items:center;gap:.35rem;padding:.42rem .78rem;border:1.5px solid transparent;border-radius:999px;font-size:.8rem;font-weight:600;line-height:1;white-space:nowrap;background:var(--orange-60);color:var(--blue-300)}
@@ -177,8 +220,15 @@ html.ev-lock,html.ev-lock body{overflow:hidden}
   .ev-d-inner{padding-bottom:env(safe-area-inset-bottom)}
 }
 
+
 @media (prefers-reduced-motion:reduce){
   .ev-day,.ev-dialog[open],.ev-chip-live::before,.ev-sk,.ev-skel .ev-card-cover{animation:none}
   .ev-card,.ev-mini{transition:none}
   .ev-card:hover{transform:none}
+}
+
+@media (max-width:767px){
+  .ev-calendar-list .ev-card-link{grid-template-columns:minmax(0,1fr);gap:24px;padding:24px}
+  .ev-calendar-list .ev-card-cover{order:0;justify-self:center;width:min(220px,100%);height:auto;aspect-ratio:1;border-radius:12px}
+  .ev-calendar-list .ev-card-title{font-size:1.35rem}
 }

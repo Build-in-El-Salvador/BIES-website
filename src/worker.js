@@ -18,7 +18,8 @@
  *                               through to the BIES app, which issues those names.
  *
  * pretix at tickets.buildinelsalvador.com supplies the legacy event listings.
- * A temporary Satlantis listing is maintained in assets/js/featured-events.js.
+ * Satlantis's public calendar supplies new listings through src/satlantis.js;
+ * assets/js/featured-events.js retains an outage fallback for the first event.
  * Only pretix's PUBLIC pages are read, so no secret is needed. If a
  * read-only pretix API token is ever stored as the Worker secret PRETIX_TOKEN,
  * it adds three extras the public pages do not carry: a per-event "host" and
@@ -28,6 +29,7 @@
 import { isSitePath, siteRoute } from './admin.js';
 import { PHOTO_PAGES, pageWithPhotos, withPhotos } from './photos.js';
 import { withFeaturedEvents } from '../assets/js/featured-events.js';
+import { satlantisEvents } from './satlantis.js';
 
 const CFG = {
   pretix: 'https://tickets.buildinelsalvador.com',
@@ -104,8 +106,13 @@ async function nip05Route(request) {
 }
 
 async function eventsRoute(request, env, ctx) {
-  const response = await pretixEventsRoute(request, env, ctx);
-  if (!response.ok && response.status < 500) return response;
+  const host = new URL(request.url).hostname.replace(/\.$/, '');
+  if (!['GET', 'HEAD'].includes(request.method) || (!CFG.hosts.includes(host) && !LOCAL_HOST_RE.test(host))) {
+    return pretixEventsRoute(request, env, ctx);
+  }
+  const [response, calendar] = await Promise.all([
+    pretixEventsRoute(request, env, ctx), satlantisEvents(request, ctx),
+  ]);
   const data = response.ok ? await response.json() : {
     generated_at: new Date().toISOString(),
     stale: false,
@@ -113,12 +120,15 @@ async function eventsRoute(request, env, ctx) {
     upcoming: [],
     past: [],
   };
-  // Overlay the local event even if pretix is unavailable or its cached data is
-  // older than this listing. Leave the existing provider cache independent.
-  if (!response.ok) return json(withFeaturedEvents(data), 200, CFG.retrySeconds);
-  const headers = new Headers(response.headers);
-  headers.delete('Content-Length');
-  return new Response(JSON.stringify(withFeaturedEvents(data)), { status: response.status, headers });
+  if (calendar.events === null) {
+    return json({ ...withFeaturedEvents(data), upcoming_stale: true }, 200, CFG.retrySeconds);
+  }
+  const events = [...calendar.events, ...(data.upcoming || []), ...(data.past || [])];
+  return json({
+    ...data, satlantis_synced: true, upcoming_stale: calendar.stale,
+    upcoming: events.filter((event) => !event.is_past).sort(byStart),
+    past: events.filter((event) => event.is_past).sort(byStartDesc),
+  }, 200, calendar.stale || !response.ok ? CFG.retrySeconds : CFG.browserSeconds);
 }
 
 async function pretixEventsRoute(request, env, ctx) {

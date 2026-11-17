@@ -3,7 +3,9 @@
 const featuredEvents = [{
   slug: 'bies-christmas-party',
   provider: 'satlantis',
-  title: 'BIES Christmas Party',
+  title: 'BIES Christmas Mixer 2026',
+  provider_id: '1003085',
+  category: 'Party',
   start: '2026-12-16T18:00:00-06:00',
   end: '2026-12-16T23:00:00-06:00',
   timezone: 'America/El_Salvador',
@@ -26,13 +28,15 @@ const featuredEvents = [{
   availability: null,
   sales: 'external',
   waiting_list: false,
-  tickets_url: 'https://www.satlantis.io/events/1003085/bies-christmas-party',
+  tickets_url: 'https://www.satlantis.io/events/1003085/bies-christmas-mixer-2026',
   ics_url: null,
 }];
 
-// Shared with the Worker for event share pages. Prefer the local listing if a
-// provider later returns it, and move it to Past after its confirmed end time.
+// Shared with the Worker for event share pages. The local listing is a fallback
+// until a calendar sync succeeds; it moves to Past after its confirmed end time.
 export function withFeaturedEvents(data = {}, now = Date.now()) {
+  // An authoritative feed, including an empty calendar, supersedes the fallback.
+  if (data.satlantis_synced) return data;
   const featuredSlugs = new Set(featuredEvents.map((ev) => ev.slug.toLowerCase()));
   const legacy = [...(data.upcoming || []), ...(data.past || [])]
     .filter((ev) => !featuredSlugs.has(String(ev.slug).toLowerCase()));
