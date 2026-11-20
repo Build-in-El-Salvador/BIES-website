@@ -78,17 +78,7 @@ p, figure, blockquote { margin: 0; }
 .plan .application-note { text-align: center; font-size: .8125rem; margin: .65rem 0 0; color: var(--muted); }
 .pioneer .application-note { color: var(--memberships-on-navy); }
 .plans-terms { margin-top: 1.2rem; color: var(--muted); font-size: .875rem; }
-.plans-terms a, .interview-body p a, .terms-document a { color: var(--cobalt); }
-.interview-dialog { width: min(800px, calc(100% - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--line); border-radius: 16px; color: var(--navy); background: var(--surface); }
-.interview-dialog::backdrop { background: var(--memberships-backdrop); }
-.interview-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem clamp(1rem, 4vw, 1.75rem); border-bottom: 1px solid var(--line); background: var(--surface); }
-.interview-close { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--navy); font: 1.5rem/1 var(--font-body); cursor: pointer; }
-.interview-close:hover { background: var(--snow); }
-.interview-body { padding: clamp(1rem, 4vw, 1.75rem); }
-.interview-body h2 { font-size: clamp(2.15rem, 5.5vw, 3rem); }
-.interview-body p { margin-top: .7rem; color: var(--muted); }
-.interview-body .button { margin-top: 1rem; }
-.interview-calendar { height: 690px; margin: .85rem calc(-1 * clamp(1rem, 4vw, 1.75rem)) 0; }
+.plans-terms a, .terms-document a { color: var(--cobalt); }
 .story { background: var(--memberships-panel); }
 .story-grid { display: grid; grid-template-columns: 1fr .95fr; gap: clamp(2.4rem, 6vw, 6rem); align-items: center; }
 .story-copy > p:not(.overline) { margin-top: 1rem; color: var(--muted); max-width: 49ch; }
