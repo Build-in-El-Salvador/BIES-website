@@ -77,6 +77,8 @@ p, figure, blockquote { margin: 0; }
 .plan .button { margin-top: auto; }
 .plan .application-note { text-align: center; font-size: .8125rem; margin: .65rem 0 0; color: var(--muted); }
 .pioneer .application-note { color: var(--memberships-on-navy); }
+.plans-terms { margin-top: 1.2rem; color: var(--muted); font-size: .875rem; }
+.plans-terms a, .interview-body p a, .terms-document a { color: var(--cobalt); }
 .interview-dialog { width: min(800px, calc(100% - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--line); border-radius: 16px; color: var(--navy); background: var(--surface); }
 .interview-dialog::backdrop { background: var(--memberships-backdrop); }
 .interview-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem clamp(1rem, 4vw, 1.75rem); border-bottom: 1px solid var(--line); background: var(--surface); }
@@ -115,6 +117,16 @@ p, figure, blockquote { margin: 0; }
 .footer-links { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; }
 .footer-links a { font-size: .875rem; text-decoration: none; }
 .footer-links a:hover { text-decoration: underline; }
+.terms-document { max-width: 74ch; margin-inline: auto; }
+.terms-document h1 { font-size: clamp(2.8rem, 6.5vw, 4.5rem); }
+.terms-document h2 { font-size: clamp(1.65rem, 3.5vw, 2.3rem); }
+.terms-document p { margin-top: .8rem; }
+.terms-document .overline { margin-top: 0; }
+.terms-document .terms-updated { margin-bottom: 1.2rem; color: var(--muted); font-size: .875rem; }
+.terms-document section { margin-top: 2.1rem; }
+.terms-toc { margin-block: 1.5rem 2rem; padding: .8rem 1rem; background: var(--memberships-panel); border-radius: 10px; }
+.terms-toc ol { margin: 0; padding-left: 1.5rem; }
+.terms-toc li + li { margin-top: .3rem; }
 @media (max-width: 1050px) {
   .wrap { width: min(calc(100% - 64px), var(--max)); }
   .nav-links { gap: 1.1rem; }

@@ -3,3 +3,9 @@
   Referrer-Policy: strict-origin
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
+
+/membership-terms
+  Content-Security-Policy: default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Referrer-Policy: strict-origin
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
