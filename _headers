@@ -1,0 +1,5 @@
+/memberships
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://assets.calendly.com/assets/external/widget.js; style-src 'self'; frame-src https://calendly.com; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Referrer-Policy: strict-origin
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY

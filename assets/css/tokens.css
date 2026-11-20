@@ -69,3 +69,15 @@
   --event-line:     #27272A;
   --event-timeline: #737373;
 }
+
+/* Membership cards and the interview dialog. */
+:root{
+  --memberships-panel: #EDF2FA;
+  --memberships-outline: #A8B3D4;
+  --memberships-rule: #121E5A16;
+  --memberships-shadow: #18295925;
+  --memberships-on-cobalt: #EDF4FF;
+  --memberships-on-navy: #D7E1F8;
+  --memberships-inverse-rule: #FFF3;
+  --memberships-backdrop: #101A43B8;
+}
