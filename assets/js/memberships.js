@@ -57,9 +57,9 @@
       const plan = link.closest('.plan');
       const name = plan.querySelector('h3').textContent;
       const annual = document.getElementById('annual').checked;
-      const amount = plan.querySelector(annual ? '.price-line.annual .amount' : '.price-line.monthly .amount').textContent;
-      const period = annual ? 'Annual' : 'Monthly';
-      document.getElementById('interview-plan').textContent = `${name} · ${amount}/${annual ? 'year' : 'month'}`;
+      const price = plan.querySelector(annual ? '.price-line.annual' : '.price-line.quarterly');
+      const period = annual ? 'Annual' : 'Quarterly';
+      document.getElementById('interview-plan').textContent = `${name} · ${price.querySelector('.amount').textContent} ${price.querySelector('.term').textContent}`;
       document.getElementById('interview-selection').textContent = `On Satlantis, choose ${name} → ${period}.`;
       email.href = link.href;
       dialog.showModal();
