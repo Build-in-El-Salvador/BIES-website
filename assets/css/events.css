@@ -44,6 +44,12 @@ html.ev-lock,html.ev-lock body{overflow:hidden}
 .ev-card-cover{width:clamp(170px,22vw,250px);aspect-ratio:1200/630;border-radius:10px;overflow:hidden;background:var(--panel)}
 .ev-card-cover img{width:100%;height:100%;object-fit:cover}
 .ev-day.is-past .ev-card-cover img{filter:grayscale(.55);opacity:.85}
+.ev-card-featured{border-top:3px solid var(--accent)}
+.ev-card-description{max-width:52ch;margin-bottom:.8rem;font-size:.95rem;line-height:1.6;color:var(--muted)}
+.ev-card-featured .ev-card-tags:empty{display:none}
+.ev-card-footer{padding:0 1.4rem 1.3rem}
+.ev-card-footer .btn{font-size:.9rem}
+.ev-card-featured .ev-ph b{font-size:clamp(1.7rem,2.8vw,2.3rem);max-width:8ch;line-height:1}
 
 /* ---------- Status chips ---------- */
 .ev-chip{display:inline-flex;align-items:center;gap:.35rem;padding:.42rem .78rem;border:1.5px solid transparent;border-radius:999px;font-size:.8rem;font-weight:600;line-height:1;white-space:nowrap;background:var(--orange-60);color:var(--blue-300)}
@@ -162,6 +168,7 @@ html.ev-lock,html.ev-lock body{overflow:hidden}
   .ev-card-link{grid-template-columns:1fr;gap:0;padding:0}
   .ev-card-cover{order:-1;width:100%;border-radius:14px 14px 0 0}
   .ev-card-body{padding:1rem 1.1rem 1.2rem}
+  .ev-card-footer{padding:0 1.1rem 1.2rem}
   .ev-dialog{width:100%;height:100%;height:100dvh;max-width:100%;max-height:100dvh;margin:0;border-radius:0}
   .ev-d-cover{height:auto;aspect-ratio:1200/630}
   .ev-d-close{top:max(.75rem,env(safe-area-inset-top));right:.75rem}

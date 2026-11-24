@@ -39,7 +39,6 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
 <link rel="manifest" href="/site.webmanifest?v=2">
 <link rel="alternate" type="text/plain" title="llms.txt" href="https://buildinelsalvador.com/llms.txt">
-<link rel="alternate" type="text/calendar" title="Build in El Salvador events" href="https://tickets.buildinelsalvador.com/bies/events/ical/">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +49,7 @@
 
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4bfaf206">
 <link rel="stylesheet" href="/assets/css/styles.css?v=65fd806c">
-<link rel="stylesheet" href="/assets/css/events.css?v=26afb29f">
+<link rel="stylesheet" href="/assets/css/events.css?v=satlantis-1">
 <noscript><style>.ev-skel{display:none}</style></noscript>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -85,10 +84,11 @@
   <span class="eyebrow">What's On</span>
   <h1>Build in El Salvador <span class="hero-accent">Events</span></h1>
   <p class="lead">Workshops, roundtables, socials and retreats where builders meet in person, trade ideas and build high-trust relationships. Pick an event for the details and tickets.</p>
-  <div class="cta-row"><a class="btn btn-ghost" href="webcal://tickets.buildinelsalvador.com/bies/events/ical/">Subscribe to our calendar</a></div>
+  <div class="cta-row"><a class="btn btn-ghost" href="#upcoming">See our next event</a></div>
 </section>
 
-<!-- Event data comes from /api/events (src/worker.js), which reads pretix. Staff edit events in pretix, never here. -->
+<!-- Legacy events come from pretix through /api/events. The temporary Satlantis
+     listing is maintained in assets/js/featured-events.js until embeds are available. -->
 <section class="wrap ev-section" id="upcoming" aria-labelledby="ev-upcoming-h">
   <div class="ev-section-head">
     <h2 class="ev-h2" id="ev-upcoming-h">Upcoming</h2>
@@ -111,11 +111,11 @@
     <a class="btn btn-orange" href="https://buildinelsalvador.substack.com/" target="_blank" rel="noopener">Join the newsletter</a>
   </div>
   <div class="panel center ev-fallback" id="ev-fallback" hidden>
-    <h3>We couldn't load our events just now</h3>
-    <p class="lead">Our ticket site always has the full list.</p>
-    <a class="btn btn-blue" href="https://tickets.buildinelsalvador.com/bies/" target="_blank" rel="noopener">See events on our ticket site</a>
+    <h3>Our past events couldn't load just now</h3>
+    <p class="lead">You can still browse our event history on our previous ticket site.</p>
+    <a class="btn btn-blue" href="https://tickets.buildinelsalvador.com/bies/?old=1" target="_blank" rel="noopener">See past events</a>
   </div>
-  <noscript><div class="panel center"><p class="lead">Our event listing needs JavaScript. <a href="https://tickets.buildinelsalvador.com/bies/">See all events on our ticket site</a>.</p></div></noscript>
+  <noscript><div class="panel center"><h3>BIES Christmas Party</h3><p class="lead">December 16, 2026 · 6–11 PM, El Salvador time. Venue to be announced.</p><a class="btn btn-orange" href="https://www.satlantis.io/events/1003085/bies-christmas-party" target="_blank" rel="noopener">View event &amp; tickets</a><p><a href="https://tickets.buildinelsalvador.com/bies/?old=1">Browse past events</a>.</p></div></noscript>
 </section>
 
 <section class="wrap ev-section" id="past" aria-labelledby="ev-past-h" hidden>
@@ -297,6 +297,6 @@
   </div>
 </footer>
 <script src="/assets/js/main.js?v=4bfaf206" defer></script>
-<script src="/assets/js/events.js?v=b721a915" defer></script>
+<script type="module" src="/assets/js/events.js?v=satlantis-1"></script>
 </body>
 </html>

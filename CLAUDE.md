@@ -62,9 +62,16 @@ wrangler.jsonc  .assetsignore
 
 ## Events page
 
-- **pretix is the source of truth.** Events are created, edited and sold at
-  `tickets.buildinelsalvador.com` (organizer `bies`). Never hard-code an event here.
-  The staff recipe is `EVENTS-RUNBOOK.md` in the BIES CORE planning folder.
+- **pretix supplies legacy listings.** Existing events are managed at
+  `tickets.buildinelsalvador.com` (organizer `bies`). Their history remains live.
+- **Temporary Satlantis exception (Mike, 2026-11-16):** the Christmas Party is
+  manually maintained in `assets/js/featured-events.js` until paid embeds/API
+  access are available. Mike confirmed Dec 16, 2026, 6–11 PM in El Salvador;
+  Satlantis's date fields still need to match. Keep unknown venue/map and ticket
+  prices/availability out of the listing. Ticket buttons open Satlantis.
+  The client and Worker share the same record, it appears even if pretix fails,
+  and it moves to Past after its end. Replace this exception when syncing arrives.
+  The legacy staff recipe is `EVENTS-RUNBOOK.md` in the BIES CORE planning folder.
 - `/api/events` reads pretix's public pages: the widget JSON (upcoming and past
   lists, description, tickets, prices, availability) and each event page's JSON-LD
   (exact start/end) and `og:image` (the event's "Social media image", used as the

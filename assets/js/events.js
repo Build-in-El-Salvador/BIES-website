@@ -1,11 +1,12 @@
 /* events.js — the Events page (events.html). Vanilla JS, no libraries.
  *
- * Reads /api/events (built by src/worker.js from pretix, the single source of
- * event data), renders a Luma-style timeline of upcoming and past events, and
- * opens a detail popup per event. Tickets are bought on the ticket site: the
- * popup's button links to the event's page on tickets.buildinelsalvador.com.
+ * Reads /api/events (legacy pretix listings) and adds the temporary Satlantis
+ * event, then renders the timeline and detail popups. Tickets are bought on
+ * each event's own ticket site.
  * This page sets no cookies and loads no third-party scripts.
  */
+import { withFeaturedEvents } from './featured-events.js?v=satlantis-1';
+
 (() => {
   'use strict';
 
@@ -212,7 +213,9 @@
   function placeholder(ev) {
     const s = toDate(ev.start), tz = tzOf(ev);
     const when = s ? `${fmt(s, tz, { month: 'short' })} ${fmt(s, tz, { day: 'numeric' })}` : 'BIES';
-    return h('div', { class: 'ev-ph', 'aria-hidden': 'true' }, h('small', { text: 'BIES' }), h('b', { text: when }));
+    return h('div', { class: 'ev-ph', 'aria-hidden': 'true' },
+      h('small', { text: ev.cover_title ? `BIES · ${when}` : 'BIES' }),
+      h('b', { text: ev.cover_title || when }));
   }
   function cover(ev, eager) {
     if (!ev.cover) return placeholder(ev);
@@ -257,6 +260,7 @@
       h('div', { class: 'ev-card-body' },
         time,
         h('h3', { class: 'ev-card-title', text: ev.title }),
+        ev.summary && h('p', { class: 'ev-card-description', text: ev.summary }),
         ev.location && h('p', { class: 'ev-card-meta' }, icon('pin'), h('span', { text: ev.location })),
         h('p', { class: 'ev-card-meta' },
           h('img', { src: '/favicon-192x192.png', alt: '', width: 18, height: 18 }),
@@ -269,7 +273,13 @@
       link.target = '_blank';
       link.rel = 'noopener';
     }
-    return h('article', { class: 'ev-card' }, link);
+    const article = h('article', { class: `ev-card${ev.provider === 'satlantis' ? ' ev-card-featured' : ''}` }, link);
+    if (ev.provider === 'satlantis' && !ev.is_past && ev.status !== 'cancelled') {
+      article.append(h('div', { class: 'ev-card-footer' },
+        h('a', { class: 'btn btn-orange', href: ev.tickets_url, target: '_blank', rel: 'noopener',
+          text: 'View event & tickets' })));
+    }
+    return article;
   }
 
   function renderList(listEl, events, isPast) {
@@ -342,7 +352,7 @@
     const box = $('ev-d-actions');
     box.replaceChildren();
     if (!ev.is_past && ev.status !== 'cancelled' && toDate(ev.start)) {
-      box.append(h('a', { class: 'ev-mini', href: ev.ics_url, rel: 'nofollow' }, icon('cal'), 'Add to calendar'));
+      if (ev.ics_url) box.append(h('a', { class: 'ev-mini', href: ev.ics_url, rel: 'nofollow' }, icon('cal'), 'Add to calendar'));
       const g = gcalUrl(ev);
       if (g) box.append(h('a', { class: 'ev-mini', href: g, target: '_blank', rel: 'noopener' }, icon('google'), 'Google Calendar'));
     }
@@ -367,6 +377,16 @@
       say(ev.status === 'cancelled' ? 'This event has been cancelled.' : 'This event has ended.');
       foot.replaceChildren('Hear about the next one first: ',
         h('a', { href: 'https://buildinelsalvador.substack.com/', target: '_blank', rel: 'noopener', text: 'join our newsletter' }), '.');
+      return;
+    }
+
+    if (ev.provider === 'satlantis') {
+      list.hidden = true;
+      say('See ticket options and the latest event updates on Satlantis.');
+      get.textContent = 'View event & tickets';
+      foot.replaceChildren('Continue to ',
+        h('a', { href: ev.tickets_url, target: '_blank', rel: 'noopener', text: 'Satlantis' }),
+        ' to view tickets.');
       return;
     }
 
@@ -495,7 +515,7 @@
         organizer: { '@type': 'Organization', name: 'Build in El Salvador', url: 'https://buildinelsalvador.com/' },
       };
       if (ev.end) node.endDate = ev.end;
-      if (ev.location) {
+      if (ev.location && !ev.location_pending) {
         node.location = { '@type': 'Place', name: splitLocation(ev.location)[0], address: { '@type': 'PostalAddress', streetAddress: ev.location, addressCountry: 'SV' } };
         if (ev.geo) node.location.geo = { '@type': 'GeoCoordinates', latitude: ev.geo.lat, longitude: ev.geo.lon };
       }
@@ -513,8 +533,10 @@
       }
       return node;
     });
+    document.getElementById('ev-event-schema')?.remove();
     if (!nodes.length) return;
     const tag = h('script', { type: 'application/ld+json' });
+    tag.id = 'ev-event-schema';
     tag.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': nodes });
     document.head.append(tag);
   }
@@ -541,19 +563,23 @@
   }
 
   async function load() {
+    // Show the local event immediately; pretix's history must not delay it.
+    render(withFeaturedEvents(), true);
     let data = null;
     try { data = await getJson(API); } catch (err) {
       if (IS_LOCAL) {
         try { data = await getJson(SAMPLE); console.info('events: showing local sample data from', SAMPLE); } catch (_) { /* fall through */ }
       }
     }
-    const up = $('ev-upcoming'), past = $('ev-past');
     if (!data) {
-      up.replaceChildren();
-      up.removeAttribute('aria-busy');
-      $('ev-fallback').hidden = false;
+      render(withFeaturedEvents({ history_unavailable: true }));
       return;
     }
+    render(withFeaturedEvents(data));
+  }
+
+  function render(data, pending = false) {
+    const up = $('ev-upcoming'), past = $('ev-past');
     // A saved copy (served while pretix is down) can be days old: an event that has ended
     // since the copy was built moves to Past, without a ticket button. pretix had already
     // sorted anything that ended before then, and fresh data is minutes old, so only saved
@@ -570,11 +596,16 @@
     const previous = [...listed.filter((ev) => ev.is_past),
       ...(data.past || []).map(normalise).filter((ev) => SLUG_RE.test(ev.slug) && !onList.has(ev.slug))]
       .sort((a, b) => (toDate(b.start) || 0) - (toDate(a.start) || 0));
+    bySlug.clear();
+    bySlugLower.clear();
     for (const ev of [...upcoming, ...previous]) { bySlug.set(ev.slug, ev); bySlugLower.set(ev.slug.toLowerCase(), ev.slug); }
 
     renderList(up, upcoming, false);
     $('ev-empty').hidden = upcoming.length > 0;
-    if (previous.length) { renderList(past, previous, true); $('past').hidden = false; }
+    renderList(past, previous, true);
+    $('past').hidden = previous.length === 0;
+    $('ev-fallback').hidden = !data.history_unavailable;
+    $('ev-stale').hidden = !data.stale;
     if (data.stale) {
       const note = $('ev-stale');
       note.textContent = 'Showing our last saved listing. Live availability is on the ticket site.';
@@ -583,6 +614,8 @@
     jsonLd(upcoming);
 
     const slug = routeSlug();
+    // A legacy event's share URL cannot be resolved until its history arrives.
+    if (pending && !slug) return;
     if (slug) {
       openEvent(slug, false);
       // Show the event's own address, also when an older #SN260926 link brought them here.
