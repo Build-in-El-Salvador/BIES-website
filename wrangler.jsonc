@@ -24,6 +24,6 @@
     "not_found_handling": "none",
     // These pages pass through src/worker.js first, which writes in any photos saved on
     // /admin/ (src/photos.js, PHOTO_PAGES). Every other file is still served straight away.
-    "run_worker_first": ["/", "/about", "/membership", "/faq", "/events", "/stories"]
+    "run_worker_first": ["/", "/about", "/membership", "/faq", "/events", "/stories", "/.well-known/lnurlp/*"]
   }
 }

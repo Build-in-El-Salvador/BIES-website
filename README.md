@@ -36,3 +36,7 @@ The "Subscribe" forms point to your Substack at https://buildinelsalvador.substa
 
 ## Request a change
 Message everybodyknowsyou.com with what you'd like changed, and we'll handle it.
+
+## BIES Lightning addresses
+
+The Worker resolves a published `name@buildinelsalvador.com` through `/.well-known/lnurlp/name`. To provision an alias, the domain operator records the verified account's 64-character hex Nostr public key and its confirmed **live** Satlantis Lightning address in the existing `SITE` KV binding. The key is `lightning:alias:<name>` and the JSON value has `pubkey` and `address` fields. The Worker checks the BIES NIP-05 owner on each lookup and passes through the provider's invoice callback and original metadata. An unassigned alias or an owner mismatch returns an error. The simulator uses Satlantis development wallets.

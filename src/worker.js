@@ -29,6 +29,7 @@
 import { isSitePath, siteRoute } from './admin.js';
 import { PHOTO_PAGES, pageWithPhotos, withPhotos } from './photos.js';
 import { withFeaturedEvents } from '../assets/js/featured-events.js';
+import { lightningAddress } from './lightning-address.js';
 import { satlantisEvents } from './satlantis.js';
 
 const CFG = {
@@ -64,6 +65,7 @@ export default {
   async fetch(request, env, ctx) {
     const { pathname } = new URL(request.url);
     if (pathname === '/api/events') return eventsRoute(request, env, ctx);
+    if (pathname.startsWith('/.well-known/lnurlp/')) return lightningAddress(request, env);
     if (pathname === '/.well-known/nostr.json') return nip05Route(request);
     if (isSitePath(pathname)) return siteRoute(request, env, ctx);
     if (pathname.startsWith('/api/')) return json({ error: 'not_found' }, 404);
